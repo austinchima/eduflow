@@ -544,6 +544,21 @@ export const dataService = {
     }
   },
 
+  // Check if user profile is complete on backend
+  async checkProfileComplete(userId) {
+    try {
+      const res = await fetch(`${API_URL}/profile/complete/${userId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (!res.ok) throw new Error('Failed to check profile completeness');
+      const data = await res.json();
+      return data.isComplete; // Assuming backend returns { isComplete: boolean }
+    } catch (error) {
+      console.error('Error checking profile completeness:', error);
+      throw error;
+    }
+  },
+
   // Helper methods
   calculateGPA(courses) {
     const activeCourses = courses.filter(course => course.is_active && course.grade)

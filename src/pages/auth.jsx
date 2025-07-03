@@ -4,6 +4,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Icon from '../components/AppIcon';
 import { useUser } from '../context/UserContext';
+import { dataService } from '../services/dataService';
 import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
@@ -28,14 +29,20 @@ const AuthPage = () => {
     setError('');
     setSuccess('');
     setLoading(true);
+    let userId = null; // Initialize userId
     try {
       if (mode === 'login') {
-        await actions.login(form.email, form.password);
+        const user = await actions.login(form.email, form.password);
+        userId = user.id;
         setSuccess('Logged in! Redirecting...');
-        setTimeout(() => navigate('/dashboard'), 1000);
       } else {
-        await actions.signup(form.email, form.password, { name: form.name });
-        setSuccess('Account created! Redirecting...');
+        const user = await actions.signup(form.email, form.password, { name: form.name });
+        userId = user.id;
+        setSuccess('Account created! Setting up your profile...');
+      }
+
+      const isProfileComplete = await dataService.checkProfileComplete(userId);
+      if (mode === 'login' && isProfileComplete) {
         setTimeout(() => navigate('/dashboard'), 1000);
       }
     } catch (err) {

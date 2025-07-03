@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('@dotenvx/dotenvx').config();
+const userProfile = require('./models/User');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

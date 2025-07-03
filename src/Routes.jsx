@@ -3,6 +3,8 @@ import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 // Add your imports here
+import ProtectedRoute from "/src/components/ProtectedRoute.jsx";
+import UserSetup from "/src/components/UserSetup.jsx";
 import Dashboard from "pages/dashboard";
 import StudyToolsHub from "pages/study-tools-hub";
 import AnalyticsDashboard from "pages/analytics-dashboard";
@@ -21,10 +23,15 @@ const Routes = () => {
       <ScrollToTop />
       <RouterRoutes>
         {/* Define your routes here */}
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<AuthPage />} /> {/* AuthPage is the entry point */}
+        {/* Protected Routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/study-tools-hub" element={<ProtectedRoute><StudyToolsHub /></ProtectedRoute>} />
+        {/* Wrap other routes requiring complete profile with ProtectedRoute */}
+        {/* <Route path="/analytics-dashboard" element={<ProtectedRoute><AnalyticsDashboard /></ProtectedRoute>} /> */}
         <Route path="/study-tools-hub" element={<StudyToolsHub />} />
         <Route path="/analytics-dashboard" element={<AnalyticsDashboard />} />
+        <Route path="/setup" element={<UserSetup />} />
         <Route path="/quiz-interface" element={<QuizInterface />} />
         <Route path="/flashcard-study-session" element={<FlashcardStudySession />} />
         <Route path="/course-management/*" element={<CourseManagement />} />
