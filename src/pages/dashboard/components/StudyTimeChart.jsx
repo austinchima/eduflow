@@ -35,6 +35,7 @@ const StudyTimeChart = ({ weeklyData, courseDistribution }) => {
 
   const totalHours = weeklyData.reduce((sum, day) => sum + day.hours, 0);
   const averageHours = (totalHours / 7).toFixed(1);
+  const totalHoursDisplay = totalHours % 1 === 0 ? totalHours : totalHours.toFixed(1);
 
   return (
     <div className="bg-surface rounded-xl p-6 shadow-md border border-border">
@@ -51,7 +52,7 @@ const StudyTimeChart = ({ weeklyData, courseDistribution }) => {
       {/* Stats Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="text-center p-3 bg-primary-50 rounded-lg">
-          <div className="text-2xl font-bold text-primary">{totalHours}</div>
+          <div className="text-2xl font-bold text-primary">{totalHoursDisplay}</div>
           <div className="text-xs text-text-muted">Total Hours</div>
         </div>
         <div className="text-center p-3 bg-accent-50 rounded-lg">
