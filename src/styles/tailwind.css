@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary Colors */
+    --color-primary: #2563EB; /* blue-600 */
+    --color-primary-50: #EFF6FF; /* blue-50 */
+    --color-primary-100: #DBEAFE; /* blue-100 */
+    --color-primary-500: #3B82F6; /* blue-500 */
+    --color-primary-600: #2563EB; /* blue-600 */
+    --color-primary-700: #1D4ED8; /* blue-700 */
+    --color-primary-foreground: #FFFFFF; /* white */
+
+    /* Secondary Colors */
+    --color-secondary: #64748B; /* slate-500 */
+    --color-secondary-50: #F8FAFC; /* slate-50 */
+    --color-secondary-100: #F1F5F9; /* slate-100 */
+    --color-secondary-200: #E2E8F0; /* slate-200 */
+    --color-secondary-500: #64748B; /* slate-500 */
+    --color-secondary-600: #475569; /* slate-600 */
+    --color-secondary-foreground: #FFFFFF; /* white */
+
+    /* Accent Colors */
+    --color-accent: #10B981; /* emerald-500 */
+    --color-accent-50: #ECFDF5; /* emerald-50 */
+    --color-accent-100: #D1FAE5; /* emerald-100 */
+    --color-accent-500: #10B981; /* emerald-500 */
+    --color-accent-600: #059669; /* emerald-600 */
+    --color-accent-foreground: #FFFFFF; /* white */
+
+    /* Background Colors */
+    --color-background: #FAFBFC; /* custom off-white */
+    --color-surface: #FFFFFF; /* white */
+    --color-card: #FFFFFF; /* white */
+    --color-popover: #FFFFFF; /* white */
+
+    /* Text Colors */
+    --color-text-primary: #1E293B; /* slate-800 */
+    --color-text-secondary: #64748B; /* slate-500 */
+    --color-text-muted: #94A3B8; /* slate-400 */
+    --color-text-foreground: #1E293B; /* slate-800 */
+
+    /* Status Colors */
+    --color-success: #059669; /* emerald-600 */
+    --color-success-50: #ECFDF5; /* emerald-50 */
+    --color-success-100: #D1FAE5; /* emerald-100 */
+    --color-success-500: #10B981; /* emerald-500 */
+    --color-success-foreground: #FFFFFF; /* white */
+
+    --color-warning: #D97706; /* amber-600 */
+    --color-warning-50: #FFFBEB; /* amber-50 */
+    --color-warning-100: #FEF3C7; /* amber-100 */
+    --color-warning-500: #F59E0B; /* amber-500 */
+    --color-warning-foreground: #FFFFFF; /* white */
+
+    --color-error: #DC2626; /* red-600 */
+    --color-error-50: #FEF2F2; /* red-50 */
+    --color-error-100: #FEE2E2; /* red-100 */
+    --color-error-500: #EF4444; /* red-500 */
+    --color-error-foreground: #FFFFFF; /* white */
+
+    /* Border Colors */
+    --color-border: #E2E8F0; /* slate-200 */
+    --color-border-light: #F1F5F9; /* slate-100 */
+    --color-border-muted: #CBD5E1; /* slate-300 */
+
+    /* Shadow Colors */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    /* Animation Variables */
+    --animation-duration-fast: 200ms;
+    --animation-duration-normal: 300ms;
+    --animation-duration-slow: 400ms;
+    --animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-body;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography Base Styles */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* Focus Styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* AI Processing Animation */
+  .ai-processing {
+    @apply opacity-60;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Micro Achievement Animation */
+  .achievement-celebration {
+    animation: celebrate 200ms ease-out;
+  }
+
+  @keyframes celebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  /* Smooth State Transitions */
+  .smooth-transition {
+    transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Card Elevation */
+  .card-elevation {
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-elevation-hover:hover {
+    box-shadow: var(--shadow-lg);
+  }
+}
