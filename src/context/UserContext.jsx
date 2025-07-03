@@ -565,6 +565,12 @@ export function UserProvider({ children }) {
     return recommendations.slice(0, 3);
   };
 
+  const logout = async () => {
+    await authService.signOut();
+    dispatch({ type: ACTIONS.SET_USER, payload: { name: 'New Student' } });
+    localStorage.removeItem('studyAI_user');
+  };
+
   const value = {
     ...state,
     actions: {
@@ -590,7 +596,8 @@ export function UserProvider({ children }) {
       calculateGPA,
       getWeeklyStudyTime,
       getCourseDistribution,
-      getRecommendations
+      getRecommendations,
+      logout
     }
   };
 

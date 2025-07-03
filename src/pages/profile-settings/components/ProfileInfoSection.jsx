@@ -3,9 +3,13 @@ import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import Icon from '../../../components/AppIcon';
 import { useUser } from '../../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProfileInfoSection = () => {
   const { user, actions } = useUser();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [tempData, setTempData] = useState({
@@ -147,6 +151,12 @@ const ProfileInfoSection = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleLogout = async () => {
+    await actions.logout();
+    toast.success('Logged out successfully!');
+    setTimeout(() => navigate('/auth'), 1200);
   };
 
   if (!user) {
@@ -453,6 +463,17 @@ const ProfileInfoSection = () => {
           </div>
         </div>
       </div>
+      <div className="mt-8 flex justify-end">
+        <Button
+          variant="outline"
+          onClick={handleLogout}
+          className="w-full sm:w-auto"
+          iconName="LogOut"
+        >
+          Log Out
+        </Button>
+      </div>
+      <ToastContainer position="top-center" autoClose={1000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 };
