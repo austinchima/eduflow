@@ -571,6 +571,19 @@ export function UserProvider({ children }) {
     localStorage.removeItem('studyAI_user');
   };
 
+  const login = async (email, password) => {
+    const data = await authService.signIn(email, password);
+    dispatch({ type: ACTIONS.SET_USER, payload: data.user });
+    return data;
+  };
+
+  const signup = async (email, password, userData = {}) => {
+    const data = await authService.signUp(email, password, userData);
+    // Automatically log in after signup
+    await login(email, password);
+    return data;
+  };
+
   const value = {
     ...state,
     actions: {
@@ -597,7 +610,9 @@ export function UserProvider({ children }) {
       getWeeklyStudyTime,
       getCourseDistribution,
       getRecommendations,
-      logout
+      logout,
+      login,
+      signup
     }
   };
 

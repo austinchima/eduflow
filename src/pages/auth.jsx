@@ -3,8 +3,12 @@ import { authService } from '../services/auth';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Icon from '../components/AppIcon';
+import { useUser } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
+  const { actions } = useUser();
+  const navigate = useNavigate();
   const [mode, setMode] = useState('login'); // 'login' or 'signup'
   const [form, setForm] = useState({
     email: '',
@@ -26,13 +30,13 @@ const AuthPage = () => {
     setLoading(true);
     try {
       if (mode === 'login') {
-        await authService.signIn(form.email, form.password);
+        await actions.login(form.email, form.password);
         setSuccess('Logged in! Redirecting...');
-        // Optionally redirect or reload
-        setTimeout(() => window.location.reload(), 1000);
+        setTimeout(() => navigate('/dashboard'), 1000);
       } else {
-        await authService.signUp(form.email, form.password, { name: form.name });
-        setSuccess('Account created! Please check your email to confirm.');
+        await actions.signup(form.email, form.password, { name: form.name });
+        setSuccess('Account created! Redirecting...');
+        setTimeout(() => navigate('/dashboard'), 1000);
       }
     } catch (err) {
       setError(err.message || 'Authentication failed');
