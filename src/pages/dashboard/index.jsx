@@ -50,6 +50,27 @@ const Dashboard = () => {
   const courseDistribution = actions.getCourseDistribution();
   const recommendations = actions.getRecommendations();
 
+  // Determine if user is a first-time user (created within the last 24 hours)
+  const isFirstTimeUser = () => {
+    if (!user.createdAt) return false;
+    
+    try {
+      const createdAt = new Date(user.createdAt);
+      const now = new Date();
+      
+      // Check if the date is valid
+      if (isNaN(createdAt.getTime())) return false;
+      
+      const hoursSinceCreation = (now - createdAt) / (1000 * 60 * 60);
+      return hoursSinceCreation < 24;
+    } catch (error) {
+      console.error('Error parsing user creation date:', error);
+      return false;
+    }
+  };
+
+  const isNewUser = isFirstTimeUser();
+
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar isCollapsed={sidebarCollapsed} onCollapseChange={setSidebarCollapsed} />
@@ -66,15 +87,18 @@ const Dashboard = () => {
             {/* Welcome Section */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-text-primary mb-2">
-                Welcome back, {user.name}! 👋
+                {isNewUser ? 'Welcome' : 'Welcome back'}, {user.firstName || user.name?.split(' ')[0] || 'Student'}! 👋
               </h1>
               <p className="text-text-secondary">
-                Here's your academic overview for today, {new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
+                {isNewUser 
+                  ? "Welcome to EduFlow! Let's start your academic journey together."
+                  : `Here's your academic overview for today, ${new Date().toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}`
+                }
               </p>
             </div>
 

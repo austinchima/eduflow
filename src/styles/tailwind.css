@@ -80,6 +80,85 @@
     --animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Dark Mode Variables */
+  [data-theme="dark"] {
+    /* Primary Colors - darker shades for better contrast */
+    --color-primary: #1D4ED8; /* blue-700 - darker for buttons */
+    --color-primary-50: #1E3A8A; /* blue-900 */
+    --color-primary-100: #1E40AF; /* blue-800 */
+    --color-primary-500: #2563EB; /* blue-600 */
+    --color-primary-600: #1D4ED8; /* blue-700 */
+    --color-primary-700: #1E40AF; /* blue-800 - even darker for hover states */
+    --color-primary-800: #1E3A8A; /* blue-900 - darkest for active states */
+    --color-primary-foreground: #FFFFFF; /* white */
+
+    /* Secondary Colors */
+    --color-secondary: #94A3B8; /* slate-400 */
+    --color-secondary-50: #1E293B; /* slate-800 */
+    --color-secondary-100: #334155; /* slate-700 */
+    --color-secondary-200: #475569; /* slate-600 */
+    --color-secondary-500: #94A3B8; /* slate-400 */
+    --color-secondary-600: #CBD5E1; /* slate-300 */
+    --color-secondary-700: #64748B; /* slate-500 - darker for hover */
+    --color-secondary-foreground: #FFFFFF; /* white */
+
+    /* Accent Colors - darker shades for better contrast */
+    --color-accent: #059669; /* emerald-600 - darker for buttons */
+    --color-accent-50: #064E3B; /* emerald-900 */
+    --color-accent-100: #065F46; /* emerald-800 */
+    --color-accent-500: #059669; /* emerald-600 */
+    --color-accent-600: #047857; /* emerald-700 - even darker for hover states */
+    --color-accent-700: #065F46; /* emerald-800 - darkest for active states */
+    --color-accent-foreground: #FFFFFF; /* white */
+
+    /* Background Colors */
+    --color-background: #0F172A; /* slate-900 */
+    --color-surface: #1E293B; /* slate-800 */
+    --color-card: #334155; /* slate-700 */
+    --color-popover: #334155; /* slate-700 */
+
+    /* Text Colors */
+    --color-text-primary: #F8FAFC; /* slate-50 */
+    --color-text-secondary: #CBD5E1; /* slate-300 */
+    --color-text-muted: #64748B; /* slate-500 */
+    --color-text-foreground: #F8FAFC; /* slate-50 */
+
+    /* Status Colors - darker shades for better contrast */
+    --color-success: #059669; /* emerald-600 - darker for buttons */
+    --color-success-50: #064E3B; /* emerald-900 */
+    --color-success-100: #065F46; /* emerald-800 */
+    --color-success-500: #059669; /* emerald-600 */
+    --color-success-600: #047857; /* emerald-700 - darker for buttons */
+    --color-success-700: #065F46; /* emerald-800 - darkest for hover */
+    --color-success-foreground: #FFFFFF; /* white */
+
+    --color-warning: #D97706; /* amber-600 - darker for buttons */
+    --color-warning-50: #451A03; /* amber-900 */
+    --color-warning-100: #78350F; /* amber-800 */
+    --color-warning-500: #D97706; /* amber-600 */
+    --color-warning-600: #B45309; /* amber-700 - darker for buttons */
+    --color-warning-700: #92400E; /* amber-800 - darkest for hover */
+    --color-warning-foreground: #FFFFFF; /* white */
+
+    --color-error: #DC2626; /* red-600 - darker for buttons */
+    --color-error-50: #450A0A; /* red-900 */
+    --color-error-100: #7F1D1D; /* red-800 */
+    --color-error-500: #DC2626; /* red-600 */
+    --color-error-600: #B91C1C; /* red-700 - darker for buttons */
+    --color-error-700: #991B1B; /* red-800 - darkest for hover */
+    --color-error-foreground: #FFFFFF; /* white */
+
+    /* Border Colors */
+    --color-border: #334155; /* slate-700 */
+    --color-border-light: #475569; /* slate-600 */
+    --color-border-muted: #64748B; /* slate-500 */
+
+    /* Shadow Colors - darker for dark mode */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  }
+
   * {
     @apply border-border;
   }
@@ -108,6 +187,73 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+
+  /* Dark Mode Button Enhancements */
+  [data-theme="dark"] .bg-primary {
+    background-color: var(--color-primary-600) !important;
+  }
+
+  [data-theme="dark"] .bg-primary:hover {
+    background-color: var(--color-primary-700) !important;
+  }
+
+  [data-theme="dark"] .bg-accent {
+    background-color: var(--color-accent-600) !important;
+  }
+
+  [data-theme="dark"] .bg-accent:hover {
+    background-color: var(--color-accent-700) !important;
+  }
+
+  [data-theme="dark"] .bg-success {
+    background-color: var(--color-success-600) !important;
+  }
+
+  [data-theme="dark"] .bg-success:hover {
+    background-color: var(--color-success-700) !important;
+  }
+
+  [data-theme="dark"] .bg-warning {
+    background-color: var(--color-warning-600) !important;
+  }
+
+  [data-theme="dark"] .bg-warning:hover {
+    background-color: var(--color-warning-700) !important;
+  }
+
+  [data-theme="dark"] .bg-error {
+    background-color: var(--color-error-600) !important;
+  }
+
+  [data-theme="dark"] .bg-error:hover {
+    background-color: var(--color-error-700) !important;
+  }
+
+  /* Ensure text contrast on colored backgrounds */
+  [data-theme="dark"] .text-primary-foreground {
+    color: #FFFFFF !important;
+    font-weight: 500;
+  }
+
+  [data-theme="dark"] .text-accent-foreground {
+    color: #FFFFFF !important;
+    font-weight: 500;
+  }
+
+  [data-theme="dark"] .text-success-foreground {
+    color: #FFFFFF !important;
+    font-weight: 500;
+  }
+
+  [data-theme="dark"] .text-warning-foreground {
+    color: #FFFFFF !important;
+    font-weight: 500;
+  }
+
+  [data-theme="dark"] .text-error-foreground {
+    color: #FFFFFF !important;
+    font-weight: 500;
   }
 }
 
@@ -141,5 +287,54 @@
 
   .card-elevation-hover:hover {
     box-shadow: var(--shadow-lg);
+  }
+}
+
+@layer utilities {
+  .text-on-colored {
+    color: #fff !important;
+    --tw-text-opacity: 1 !important;
+  }
+  .icon-on-colored {
+    color: #fff !important;
+    opacity: 1 !important;
+  }
+  .icon-contrast {
+    color: var(--color-primary-700) !important;
+  }
+  [data-theme="dark"] .icon-contrast {
+    color: #fff !important;
+  }
+
+  /* New icon contrast utilities for colored backgrounds */
+  .icon-success-contrast {
+    color: var(--color-success-700) !important;
+  }
+  [data-theme="dark"] .icon-success-contrast {
+    color: #fff !important;
+  }
+  .icon-warning-contrast {
+    color: var(--color-warning-700) !important;
+  }
+  [data-theme="dark"] .icon-warning-contrast {
+    color: #fff !important;
+  }
+  .icon-error-contrast {
+    color: var(--color-error-700) !important;
+  }
+  [data-theme="dark"] .icon-error-contrast {
+    color: #fff !important;
+  }
+  .icon-accent-contrast {
+    color: var(--color-accent-700) !important;
+  }
+  [data-theme="dark"] .icon-accent-contrast {
+    color: #fff !important;
+  }
+  .icon-primary-contrast {
+    color: var(--color-primary-700) !important;
+  }
+  [data-theme="dark"] .icon-primary-contrast {
+    color: #fff !important;
   }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import Icon from '../../../components/AppIcon';
+import { createThemeAwareColorClass } from '../../../utils/themeUtils';
 
 const StudyTimeChart = ({ weeklyData, courseDistribution }) => {
   const COLORS = ['#2563EB', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4'];
@@ -41,7 +42,7 @@ const StudyTimeChart = ({ weeklyData, courseDistribution }) => {
     <div className="bg-surface rounded-xl p-6 shadow-md border border-border">
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
-          <Icon name="BarChart3" size={20} color="var(--color-primary)" />
+          <Icon name="BarChart3" size={20} className="icon-contrast" />
         </div>
         <div>
           <h3 className="text-lg font-semibold text-text-primary">Study Analytics</h3>
@@ -52,20 +53,20 @@ const StudyTimeChart = ({ weeklyData, courseDistribution }) => {
       {/* Stats Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="text-center p-3 bg-primary-50 rounded-lg">
-          <div className="text-2xl font-bold text-primary">{totalHoursDisplay}</div>
-          <div className="text-xs text-text-muted">Total Hours</div>
+          <div className={`text-2xl font-bold ${createThemeAwareColorClass('primary')}`}>{totalHoursDisplay}</div>
+          <div className={`text-xs ${createThemeAwareColorClass('muted')}`}>Total Hours</div>
         </div>
         <div className="text-center p-3 bg-accent-50 rounded-lg">
-          <div className="text-2xl font-bold text-accent">{averageHours}</div>
-          <div className="text-xs text-text-muted">Daily Average</div>
+          <div className={`text-2xl font-bold ${createThemeAwareColorClass('accent')}`}>{averageHours}</div>
+          <div className={`text-xs ${createThemeAwareColorClass('muted')}`}>Daily Average</div>
         </div>
         <div className="text-center p-3 bg-success-50 rounded-lg">
-          <div className="text-2xl font-bold text-success">{courseDistribution.length}</div>
-          <div className="text-xs text-text-muted">Active Courses</div>
+          <div className={`text-2xl font-bold ${createThemeAwareColorClass('success')}`}>{courseDistribution.length}</div>
+          <div className={`text-xs ${createThemeAwareColorClass('muted')}`}>Active Courses</div>
         </div>
         <div className="text-center p-3 bg-warning-50 rounded-lg">
-          <div className="text-2xl font-bold text-warning">85%</div>
-          <div className="text-xs text-text-muted">Goal Progress</div>
+          <div className={`text-2xl font-bold ${createThemeAwareColorClass('warning')}`}>85%</div>
+          <div className={`text-xs ${createThemeAwareColorClass('muted')}`}>Goal Progress</div>
         </div>
       </div>
 
@@ -124,7 +125,7 @@ const StudyTimeChart = ({ weeklyData, courseDistribution }) => {
           {/* Legend */}
           <div className="grid grid-cols-1 gap-2 mt-4">
             {courseDistribution.map((course, index) => (
-              <div key={course.name} className="flex items-center space-x-2 text-sm">
+              <div key={course.id || course.name} className="flex items-center space-x-2 text-sm">
                 <div 
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}

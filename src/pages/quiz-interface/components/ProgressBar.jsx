@@ -12,16 +12,16 @@ const ProgressBar = ({
   return (
     <div className="bg-surface border-b border-border px-4 py-3 lg:px-6">
       {/* Progress Bar */}
-      <div className="relative w-full h-2 bg-secondary-100 rounded-full overflow-hidden mb-3">
+      <div className="relative w-full h-2 bg-secondary-100 rounded-full overflow-hidden mb-3 text-on-colored">
         {/* Answered Progress */}
         <div 
-          className="absolute top-0 left-0 h-full bg-accent transition-all duration-300 ease-smooth"
+          className="absolute top-0 left-0 h-full bg-accent transition-all duration-300 ease-smooth text-on-colored"
           style={{ width: `${answeredProgress}%` }}
         />
         
         {/* Current Progress */}
         <div 
-          className="absolute top-0 left-0 h-full bg-primary transition-all duration-300 ease-smooth"
+          className="absolute top-0 left-0 h-full bg-primary transition-all duration-300 ease-smooth text-on-colored"
           style={{ width: `${progress}%` }}
         />
       </div>

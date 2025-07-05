@@ -28,9 +28,9 @@ const QuestionCard = ({
               w-full p-4 text-left rounded-lg border-2 transition-all duration-200
               ${isSelected 
                 ? isCorrect 
-                  ? 'border-success bg-success-50 text-success-600'
+                  ? 'border-success bg-success-50 text-success-600 text-on-colored'
                   : isIncorrect
-                    ? 'border-error bg-error-50 text-error-600' :'border-primary bg-primary-50 text-primary-600' :'border-border hover:border-primary hover:bg-primary-50'
+                    ? 'border-error bg-error-50 text-error-600 text-on-colored' :'border-primary bg-primary-50 text-primary-600 text-on-colored' :'border-border hover:border-primary hover:bg-primary-50 text-on-colored'
               }
               ${showFeedback && isCorrect && !isSelected ? 'border-success bg-success-50' : ''}
               ${showFeedback ? 'cursor-default' : 'cursor-pointer'}
@@ -91,7 +91,7 @@ const QuestionCard = ({
             className={`
               w-full p-4 text-left rounded-lg border-2 transition-all duration-200
               ${isSelected 
-                ? 'border-primary bg-primary-50 text-primary-600' :'border-border hover:border-primary hover:bg-primary-50'
+                ? 'border-primary bg-primary-50 text-primary-600 text-on-colored' :'border-border hover:border-primary hover:bg-primary-50 text-on-colored'
               }
               ${showFeedback && isCorrect ? 'border-success bg-success-50' : ''}
               ${showFeedback ? 'cursor-default' : 'cursor-pointer'}

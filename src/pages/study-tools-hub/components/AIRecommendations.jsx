@@ -36,11 +36,11 @@ const AIRecommendations = ({ recommendations, onAcceptRecommendation }) => {
   }
 
   return (
-    <div className="bg-surface border border-border rounded-lg p-6 mb-6">
+    <div className="bg-surface border border-border rounded-lg p-6 mb-6 text-on-colored">
       <div className="flex items-center space-x-2 mb-4">
         <Icon name="Brain" size={20} color="var(--color-primary)" />
         <h2 className="text-lg font-semibold text-text-primary">AI Recommendations</h2>
-        <div className="bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-medium">
+        <div className="bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-medium text-on-colored bg-on-colored">
           Smart
         </div>
       </div>
@@ -53,11 +53,12 @@ const AIRecommendations = ({ recommendations, onAcceptRecommendation }) => {
           >
             <div className="flex items-start justify-between">
               <div className="flex items-start space-x-3 flex-1">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm icon-on-colored">
                   <Icon 
                     name={getRecommendationIcon(recommendation.type)} 
                     size={16} 
-                    color="var(--color-primary)" 
+                    color="currentColor" 
+                    className="icon-on-colored" 
                   />
                 </div>
                 

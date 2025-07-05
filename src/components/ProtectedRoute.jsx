@@ -1,49 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { dataService } from '../services/dataService';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
 
   useEffect(() => {
-    const checkAuthAndProfile = async () => {
+    const checkAuth = async () => {
       setLoading(true);
-      if (!user) {
+      if (!user || !user.id) {
         // Not authenticated, redirect to auth page
         navigate('/auth');
       } else {
-        try {
-          // User is authenticated, check profile completeness
-          const complete = await dataService.checkProfileComplete(user.id);
-          setIsProfileComplete(complete);
-          if (!complete) {
-            // Profile is not complete, redirect to setup page
-            navigate('/setup');
-          }
-        } catch (error) {
-          console.error('Error checking profile completeness:', error);
-          // Handle error (e.g., redirect to an error page or auth)
-          navigate('/auth'); // Redirect to auth on error
-        } finally {
-          setLoading(false);
-        }
+        // User is authenticated, allow access
+        setLoading(false);
       }
     };
 
-    checkAuthAndProfile();
-  }, [user, navigate]); // Re-run effect if user or navigate changes
+    checkAuth();
+  }, [user, navigate]);
 
   if (loading) {
     // Render a loading indicator while checking
-    return <div>Loading...</div>; // Replace with your preferred loading component
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-text-secondary">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
-  // If authenticated and profile is complete, render children
-  if (user && isProfileComplete) {
+  // If authenticated, render children
+  if (user && user.id) {
     return <>{children}</>;
   }
 

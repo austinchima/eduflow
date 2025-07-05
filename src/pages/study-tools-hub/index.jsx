@@ -28,6 +28,37 @@ const StudyToolsHub = () => {
   const cards = Array.isArray(flashcards?.cards) ? flashcards.cards : [];
   const availableQuizzes = Array.isArray(quizzes?.available) ? quizzes.available : [];
 
+  // Combine flashcards and quizzes into study tools
+  const studyTools = [
+    ...decks.map(deck => ({
+      id: `flashcard_${deck.id}`,
+      type: 'flashcard',
+      title: deck.name,
+      description: deck.description || 'Flashcard deck',
+      courseId: deck.courseId,
+      course: deck.subject,
+      difficulty: deck.difficulty || 'medium',
+      status: deck.status || 'active',
+      dueReviews: deck.reviewCards || 0,
+      totalCards: deck.totalCards || 0,
+      lastStudied: deck.lastStudied,
+      createdAt: deck.createdAt
+    })),
+    ...availableQuizzes.map(quiz => ({
+      id: `quiz_${quiz.id}`,
+      type: 'quiz',
+      title: quiz.title,
+      description: quiz.description || 'Quiz',
+      courseId: quiz.courseId,
+      course: quiz.subject,
+      difficulty: quiz.difficulty || 'medium',
+      status: quiz.status || 'not-started',
+      dueReviews: 0,
+      totalQuestions: quiz.questions?.length || 0,
+      completionRate: quiz.completionRate || 0,
+      createdAt: quiz.createdAt
+    }))
+  ];
 
   // Get AI recommendations based on user data
   const aiRecommendations = actions.getRecommendations().map(rec => ({
@@ -236,7 +267,7 @@ const StudyToolsHub = () => {
               {!searchQuery && !selectedCourse && !selectedDifficulty && !selectedStatus && (
                 <button
                   onClick={() => setActiveTab('all')}
-                  className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors"
+                  className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors text-on-colored"
                 >
                   Create Your First Tool
                 </button>

@@ -33,7 +33,7 @@ const QuickCreateSection = ({ onCreateQuiz, onCreateFlashcards, onCreateNotes })
   return (
     <div className="bg-surface border border-border rounded-lg p-6 mb-6">
       <div className="flex items-center space-x-2 mb-4">
-        <Icon name="Zap" size={20} color="var(--color-primary)" />
+        <Icon name="Zap" size={20} className="icon-contrast" />
         <h2 className="text-lg font-semibold text-text-primary">Quick Create</h2>
       </div>
       
@@ -45,8 +45,8 @@ const QuickCreateSection = ({ onCreateQuiz, onCreateFlashcards, onCreateNotes })
             className="text-left p-4 rounded-lg border border-border hover:border-primary transition-all duration-200 hover:shadow-sm group"
           >
             <div className="flex items-center space-x-3 mb-2">
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${action.color}`}>
-                <Icon name={action.icon} size={20} color="currentColor" />
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${action.color} icon-on-colored`}>
+                <Icon name={action.icon} size={20} className="icon-on-colored" />
               </div>
               <div>
                 <h3 className="font-medium text-text-primary group-hover:text-primary transition-colors">

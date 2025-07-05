@@ -68,27 +68,12 @@ const DifficultyButtons = ({ onDifficultySelect, disabled = false }) => {
             key={option.key}
             onClick={() => onDifficultySelect(option.key)}
             disabled={disabled}
-            className={`
-              relative p-4 rounded-lg border-2 transition-all duration-200
-              ${option.bgColor} ${option.borderColor} ${option.textColor}
-              hover:shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary
-            `}
+            className={`flex flex-col items-center justify-center px-2 py-2 rounded-lg border-2 focus:outline-none transition-all duration-200 w-full group ${option.bgColor} ${option.textColor} ${option.borderColor} text-on-colored`}
           >
-            <div className="flex flex-col items-center space-y-2">
-              <Icon name={option.icon} size={24} />
-              <div className="text-center">
-                <div className="font-semibold text-sm">{option.label}</div>
-                <div className="text-xs opacity-80 leading-tight">
-                  {option.description}
-                </div>
-              </div>
-            </div>
-            
-            {/* Keyboard Shortcut */}
-            <div className="absolute top-2 right-2 w-6 h-6 bg-white bg-opacity-80 rounded-full flex items-center justify-center">
-              <span className="text-xs font-bold text-text-primary">{option.shortcut}</span>
-            </div>
+            <Icon name={option.icon} size={20} className="icon-on-colored mb-1" />
+            <span className="font-semibold text-on-colored">{option.label}</span>
+            <span className="text-xs text-on-colored opacity-80">{option.description}</span>
+            <span className="text-xs text-on-colored opacity-60 mt-1">[{option.shortcut}]</span>
           </button>
         ))}
       </div>

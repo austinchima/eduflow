@@ -32,15 +32,15 @@ const KPICard = ({ title, value, subtitle, icon, trend, trendValue, color = 'pri
           )}
         </div>
         
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          <Icon name={icon} size={24} />
+        <div className={`p-3 rounded-lg ${colorClasses[color]} icon-on-colored`}>
+          <Icon name={icon} size={24} className="icon-on-colored" />
         </div>
       </div>
 
       {trend && trendValue && (
         <div className="flex items-center mt-4 pt-4 border-t border-border">
-          <Icon name={getTrendIcon()} size={16} className={getTrendColor()} />
-          <span className={`text-sm font-medium ml-1 ${getTrendColor()}`}>
+          <Icon name={getTrendIcon()} size={16} className={`icon-on-colored ${getTrendColor()}`} />
+          <span className={`text-sm font-medium ml-1 text-on-colored ${getTrendColor()}`}>
             {trendValue}
           </span>
           <span className="text-sm text-text-muted ml-1">vs last period</span>

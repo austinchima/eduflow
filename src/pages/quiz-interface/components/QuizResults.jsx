@@ -28,15 +28,15 @@ const QuizResults = ({
   };
 
   const getScoreColor = () => {
-    if (accuracy >= 80) return 'text-success';
-    if (accuracy >= 60) return 'text-warning';
-    return 'text-error';
+    if (accuracy >= 80) return 'text-success text-on-colored';
+    if (accuracy >= 60) return 'text-warning text-on-colored';
+    return 'text-error text-on-colored';
   };
 
   const getScoreBgColor = () => {
-    if (accuracy >= 80) return 'bg-success-50 border-success';
-    if (accuracy >= 60) return 'bg-warning-50 border-warning';
-    return 'bg-error-50 border-error';
+    if (accuracy >= 80) return 'bg-success-50 border-success text-on-colored';
+    if (accuracy >= 60) return 'bg-warning-50 border-warning text-on-colored';
+    return 'bg-error-50 border-error text-on-colored';
   };
 
   const getPerformanceMessage = () => {
@@ -100,7 +100,7 @@ const QuizResults = ({
             <div className="space-y-3">
               {recommendations.map((recommendation, index) => (
                 <div key={index} className="flex items-start space-x-3 p-3 bg-primary-50 rounded-lg">
-                  <Icon name="Lightbulb" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                  <Icon name="Lightbulb" size={16} className="icon-on-colored mt-0.5 flex-shrink-0" />
                   <div>
                     <h4 className="font-medium text-text-primary mb-1">{recommendation.title}</h4>
                     <p className="text-sm text-text-secondary">{recommendation.description}</p>

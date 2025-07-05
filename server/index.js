@@ -27,7 +27,7 @@ app.use('/api/ai', require('./routes/ai'));
 // Materials routes
 app.use('/api/materials', require('./routes/materials'));
 // Courses routes
-app.use('/', require('./routes/courses'));
+app.use('/api', require('./routes/courses'));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

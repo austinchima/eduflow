@@ -1,24 +1,27 @@
-const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api/auth'
+const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'
 
 export const authService = {
   // Register user
   async signUp(email, password, userData = {}) {
-    const res = await fetch(`${API_URL}/register`, {
+    const res = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email,
         password,
-        username: userData.username || userData.name || ''
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || ''
       })
     })
     if (!res.ok) throw new Error((await res.json()).message || 'Registration failed')
-    return res.json()
+    const data = await res.json()
+    localStorage.setItem('token', data.token)
+    return data
   },
 
   // Login user
   async signIn(email, password) {
-    const res = await fetch(`${API_URL}/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -39,7 +42,7 @@ export const authService = {
   async getCurrentUser() {
     const token = localStorage.getItem('token')
     if (!token) return null
-    const res = await fetch(`${API_URL}/me`, {
+    const res = await fetch(`${API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (!res.ok) return null

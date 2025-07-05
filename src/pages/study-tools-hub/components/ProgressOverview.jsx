@@ -7,25 +7,25 @@ const ProgressOverview = ({ progressData }) => {
       label: 'Total Tools',
       value: progressData.totalTools,
       icon: 'BookOpen',
-      color: 'text-primary bg-primary-50'
+      color: 'text-primary bg-primary-50 text-on-colored'
     },
     {
       label: 'Completed',
       value: progressData.completedTools,
       icon: 'CheckCircle',
-      color: 'text-success bg-success-50'
+      color: 'text-success bg-success-50 text-on-colored'
     },
     {
       label: 'In Progress',
       value: progressData.inProgressTools,
       icon: 'Clock',
-      color: 'text-warning bg-warning-50'
+      color: 'text-warning bg-warning-50 text-on-colored'
     },
     {
       label: 'Due Reviews',
       value: progressData.dueReviews,
       icon: 'RotateCcw',
-      color: 'text-accent bg-accent-50'
+      color: 'text-accent bg-accent-50 text-on-colored'
     }
   ];
 
@@ -37,7 +37,7 @@ const ProgressOverview = ({ progressData }) => {
     <div className="bg-surface border border-border rounded-lg p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <Icon name="TrendingUp" size={20} color="var(--color-primary)" />
+          <Icon name="TrendingUp" size={20} className="icon-contrast" />
           <h2 className="text-lg font-semibold text-text-primary">Progress Overview</h2>
         </div>
         

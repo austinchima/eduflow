@@ -32,7 +32,7 @@ const FilterSection = ({
   const hasActiveFilters = selectedCourse || selectedDifficulty || selectedStatus || searchQuery;
 
   return (
-    <div className="bg-surface border border-border rounded-lg p-4 mb-6">
+    <div className="bg-surface border border-border rounded-lg p-4 mb-6 text-on-colored">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Icon name="Filter" size={18} color="var(--color-text-secondary)" />
@@ -86,7 +86,7 @@ const FilterSection = ({
           >
             <option value="">All Courses</option>
             {courses.map((course) => (
-              <option key={course.id} value={course.id}>
+              <option key={`filter-${course.id}`} value={course.id}>
                 {course.name}
               </option>
             ))}

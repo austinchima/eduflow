@@ -1,25 +1,25 @@
 import React, { useState, useRef } from 'react';
 import Icon from '../../../components/AppIcon';
-
 import Button from '../../../components/ui/Button';
 import MaterialUploadArea from './MaterialUploadArea';
+import { getSemesterDisplayName, getSemesterColorClass } from '../../../utils/semesterUtils';
 
-const CourseCard = ({ course, onEdit, onUpload, onArchive, onViewMaterials, onStudy }) => {
+const CourseCard = ({ course, onEdit, onUpload, onArchive, onViewMaterials, onStudy, onDelete }) => {
   const [showMenu, setShowMenu] = useState(false);
   const fileInputRef = useRef(null);
 
   const getGradeColor = (grade) => {
-    if (grade >= 90) return 'text-success';
-    if (grade >= 80) return 'text-accent';
-    if (grade >= 70) return 'text-warning';
-    return 'text-error';
+    if (grade >= 90) return 'text-success text-on-colored';
+    if (grade >= 80) return 'text-accent text-on-colored';
+    if (grade >= 70) return 'text-warning text-on-colored';
+    return 'text-error text-on-colored';
   };
 
   const getProgressColor = (progress) => {
-    if (progress >= 80) return 'bg-success';
-    if (progress >= 60) return 'bg-accent';
-    if (progress >= 40) return 'bg-warning';
-    return 'bg-error';
+    if (progress >= 80) return 'bg-success text-on-colored';
+    if (progress >= 60) return 'bg-accent text-on-colored';
+    if (progress >= 40) return 'bg-warning text-on-colored';
+    return 'bg-error text-on-colored';
   };
 
   return (
@@ -31,7 +31,9 @@ const CourseCard = ({ course, onEdit, onUpload, onArchive, onViewMaterials, onSt
           <p className="text-sm text-text-secondary">{course.instructor}</p>
           <div className="flex items-center space-x-4 mt-2">
             <span className="text-xs text-text-muted">{course.credits} Credits</span>
-            <span className="text-xs text-text-muted">{course.semester}</span>
+            <span className={`text-xs ${getSemesterColorClass(course.semester)}`}>
+              {getSemesterDisplayName(course.semester)}
+            </span>
           </div>
         </div>
         
@@ -80,13 +82,23 @@ const CourseCard = ({ course, onEdit, onUpload, onArchive, onViewMaterials, onSt
               </button>
               <button
                 onClick={() => {
-                  onArchive(course);
+                  onArchive(course, course.status === 'archived' ? 'active' : 'archived');
+                  setShowMenu(false);
+                }}
+                className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-secondary-50"
+              >
+                <Icon name="Archive" size={16} />
+                <span>{course.status === 'archived' ? 'Unarchive Course' : 'Archive Course'}</span>
+              </button>
+              <button
+                onClick={() => {
+                  onDelete(course.id);
                   setShowMenu(false);
                 }}
                 className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-error hover:bg-error-50 rounded-b-lg"
               >
-                <Icon name="Archive" size={16} />
-                <span>Archive Course</span>
+                <Icon name="Trash2" size={16} />
+                <span>Delete Course</span>
               </button>
             </div>
           )}

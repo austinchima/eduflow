@@ -43,12 +43,12 @@ const Button = React.forwardRef(({
 
     // Variant classes
     const variantClasses = {
-        primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        success: 'bg-success text-white hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50',
-        danger: 'bg-error text-white hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50',
-        warning: 'bg-warning text-primary-foreground hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50',
-        info: 'bg-accent text-white hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50',
+        primary: 'bg-primary text-primary-foreground hover:bg-primary/90 text-on-colored',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 text-on-colored',
+        success: 'bg-success text-white hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50 text-on-colored',
+        danger: 'bg-error text-white hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50 text-on-colored',
+        warning: 'bg-warning text-primary-foreground hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50 text-on-colored',
+        info: 'bg-accent text-white hover:bg-opacity-90 active:bg-opacity-100 disabled:opacity-50 text-on-colored',
         ghost: 'hover:bg-primary hover:text-primary-foreground',
         link: 'bg-transparent text-primary-foreground underline hover:text-primary-600 p-0',
         outline: 'border border-input bg-background hover:bg-primary hover:text-primary-foreground',
@@ -72,6 +72,19 @@ const Button = React.forwardRef(({
 
     // Icon rendering
     const renderIcon = () => {
+        // Determine icon color based on variant
+        const getIconColorClass = () => {
+            if (iconColor) return ''; // Use custom color if provided
+            
+            // For variants with colored backgrounds, use white icon
+            if (['primary', 'secondary', 'success', 'danger', 'warning', 'info'].includes(variant)) {
+                return 'icon-on-colored';
+            }
+            
+            // For variants with light backgrounds, use current color
+            return 'text-current';
+        };
+
         if (iconName) {
             // Use AppIcon component when iconName is provided
             const iconSizeMap = {
@@ -87,11 +100,11 @@ const Button = React.forwardRef(({
             const calculatedSize = iconSize || iconSizeMap[size] || 18;
 
             return (
-                <span style={{ color: iconColor || 'currentColor' }}>
+                <span style={{ color: iconColor || 'currentColor' }} className={getIconColorClass()}>
                     <Icon
                         name={iconName}
                         size={calculatedSize}
-                        className={`${children ? (iconPosition === 'left' ? 'mr-2' : 'ml-2') : ''}`}
+                        className={`${children ? (iconPosition === 'left' ? 'mr-2' : 'ml-2') : ''} ${getIconColorClass()}`}
                     />
                 </span>
 
@@ -101,7 +114,7 @@ const Button = React.forwardRef(({
         if (!icon) return null;
 
         return React.cloneElement(icon, {
-            className: `${children ? (iconPosition === 'left' ? 'mr-2' : 'ml-2') : ''} h-5 w-5`
+            className: `${children ? (iconPosition === 'left' ? 'mr-2' : 'ml-2') : ''} h-5 w-5 ${getIconColorClass()}`
         });
     };
 

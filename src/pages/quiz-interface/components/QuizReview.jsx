@@ -139,8 +139,8 @@ const QuizReview = ({
                   className={`
                     px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200
                     ${filter === tab.key 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-secondary-100 text-text-secondary hover:bg-secondary-200'
+                      ? 'bg-primary text-primary-foreground text-on-colored' 
+                      : 'bg-secondary-100 text-text-secondary hover:bg-secondary-200 text-on-colored'
                     }
                   `}
                 >
@@ -164,9 +164,9 @@ const QuizReview = ({
                   className={`
                     w-10 h-10 rounded-lg text-sm font-medium transition-all duration-200
                     ${isActive 
-                      ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2' 
-                      : status === 'correct' ?'bg-success text-success-foreground hover:bg-success-600'
-                        : status === 'incorrect' ?'bg-error text-error-foreground hover:bg-error-600' :'bg-secondary-200 text-text-secondary hover:bg-secondary-300'
+                      ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 text-on-colored' 
+                      : status === 'correct' ?'bg-success text-success-foreground hover:bg-success-600 text-on-colored'
+                        : status === 'incorrect' ?'bg-error text-error-foreground hover:bg-error-600 text-on-colored' :'bg-secondary-200 text-text-secondary hover:bg-secondary-300 text-on-colored'
                     }
                     ${question.flagged ? 'ring-2 ring-warning ring-offset-1' : ''}
                   `}

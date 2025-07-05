@@ -8,6 +8,7 @@ import Icon from '../../components/AppIcon';
 
 // Import section components
 import ProfileInfoSection from './components/ProfileInfoSection';
+import UsernameSection from './components/UsernameSection';
 import AccountSettingsSection from './components/AccountSettingsSection';
 import StudyPreferencesSection from './components/StudyPreferencesSection';
 import NotificationSection from './components/NotificationSection';
@@ -28,6 +29,12 @@ const ProfileSettings = () => {
       label: 'Profile',
       icon: 'User',
       component: ProfileInfoSection
+    },
+    {
+      id: 'username',
+      label: 'Username',
+      icon: 'AtSign',
+      component: UsernameSection
     },
     {
       id: 'account',
@@ -127,7 +134,7 @@ const ProfileSettings = () => {
             <div className="mb-6 lg:mb-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center icon-on-colored">
                     <Icon name="Settings" size={24} color="white" />
                   </div>
                   <div>
@@ -232,7 +239,7 @@ const ProfileSettings = () => {
 
                 {/* Help Section - Desktop */}
                 {!isMobile && (
-                  <div className="mt-6 bg-accent-50 border border-accent-100 rounded-lg p-4">
+                  <div className="mt-6 bg-accent-50 border border-accent-100 rounded-lg p-4 text-on-colored">
                     <div className="flex items-start space-x-3">
                       <Icon name="HelpCircle" size={20} className="text-accent-600 mt-0.5" />
                       <div>
@@ -283,7 +290,7 @@ const ProfileSettings = () => {
                 </div>
                 
                 {/* Mobile Help Section */}
-                <div className="mt-4 bg-accent-50 border border-accent-100 rounded-lg p-4">
+                <div className="mt-4 bg-accent-50 border border-accent-100 rounded-lg p-4 text-on-colored">
                   <div className="flex items-start space-x-3">
                     <Icon name="HelpCircle" size={18} className="text-accent-600 mt-0.5" />
                     <div>

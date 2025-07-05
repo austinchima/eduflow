@@ -28,7 +28,7 @@ const StudyStreak = ({ currentStreak, longestStreak, weeklyGoal, weeklyProgress,
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
-            <Icon name="Flame" size={20} className="text-primary" />
+            <Icon name="Flame" size={20} className="icon-contrast" />
           </div>
           <div>
             <h3 className="font-semibold text-text-primary">Study Streak</h3>

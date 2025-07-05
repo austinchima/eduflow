@@ -145,6 +145,18 @@ const StudyPreferencesSection = () => {
       </div>
 
       <div className="space-y-6">
+        {/* Note about initial setup preferences */}
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <Icon name="Info" size={16} className="text-primary mt-0.5 mr-2 flex-shrink-0" />
+            <div>
+              <p className="text-sm text-primary-800">
+                <strong>Initial Setup Preferences:</strong> You can also edit your daily study goal, GPA target, and notification settings that you set during your initial setup. These are managed in your Profile Information section.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Quiz Settings */}
         <div className="border border-border-light rounded-lg p-4">
           <h3 className="text-base lg:text-lg font-medium text-text-primary mb-4 flex items-center">

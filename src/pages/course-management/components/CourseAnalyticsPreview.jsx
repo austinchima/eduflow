@@ -8,19 +8,19 @@ const CourseAnalyticsPreview = ({ courses }) => {
   const activeCourses = courses.filter(c => c.status === 'active').length;
   const completedCourses = courses.filter(c => c.status === 'completed').length;
   const totalMaterials = courses.reduce((sum, course) => sum + course.materialCount, 0);
-  const averageGrade = courses.length > 0 
+  const averageGrade = courses.length > 0
     ? Math.round(courses.reduce((sum, course) => sum + course.currentGrade, 0) / courses.length)
     : 0;
 
   // Study time distribution data (mock)
   const studyTimeData = [
-    { name: 'Mon', hours: 3.5 },
-    { name: 'Tue', hours: 2.8 },
-    { name: 'Wed', hours: 4.2 },
-    { name: 'Thu', hours: 3.1 },
-    { name: 'Fri', hours: 2.5 },
-    { name: 'Sat', hours: 5.2 },
-    { name: 'Sun', hours: 4.8 }
+    { name: 'Mon', hours: '' },
+    { name: 'Tue', hours: '' },
+    { name: 'Wed', hours: '' },
+    { name: 'Thu', hours: '' },
+    { name: 'Fri', hours: '' },
+    { name: 'Sat', hours: '' },
+    { name: 'Sun', hours: '' }
   ];
 
   // Course progress distribution
@@ -29,6 +29,9 @@ const CourseAnalyticsPreview = ({ courses }) => {
     { name: 'In Progress', value: activeCourses, color: '#3B82F6' },
     { name: 'Not Started', value: Math.max(0, totalCourses - activeCourses - completedCourses), color: '#F59E0B' }
   ];
+
+  // Generate a key for the chart to force re-mount and animate on data change
+  const chartKey = progressData.map(d => d.value).join('-');
 
   const stats = [
     {
@@ -43,7 +46,7 @@ const CourseAnalyticsPreview = ({ courses }) => {
       value: activeCourses,
       icon: 'Play',
       color: 'text-accent',
-      bgColor: 'bg-accent-50'
+      bgColor: 'bg-accent'
     },
     {
       label: 'Average Grade',
@@ -65,7 +68,7 @@ const CourseAnalyticsPreview = ({ courses }) => {
     <div className="bg-surface border border-border rounded-lg p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-text-primary">Course Analytics Preview</h3>
-        <Icon name="BarChart3" size={20} className="text-text-muted" />
+        {/* <Icon name="BarChart3" size={20} className="text-text-muted" /> */}
       </div>
 
       {/* Stats Grid */}
@@ -73,7 +76,7 @@ const CourseAnalyticsPreview = ({ courses }) => {
         {stats.map((stat, index) => (
           <div key={index} className="text-center p-4 rounded-lg border border-border">
             <div className={`w-12 h-12 ${stat.bgColor} rounded-lg flex items-center justify-center mx-auto mb-2`}>
-              <Icon name={stat.icon} size={24} className={stat.color} />
+              <Icon name={stat.icon} size={24} className="icon-on-colored" />
             </div>
             <div className="text-2xl font-bold text-text-primary mb-1">{stat.value}</div>
             <div className="text-sm text-text-secondary">{stat.label}</div>
@@ -89,18 +92,18 @@ const CourseAnalyticsPreview = ({ courses }) => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={studyTimeData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                <XAxis 
-                  dataKey="name" 
+                <XAxis
+                  dataKey="name"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 12, fill: '#64748B' }}
                 />
-                <YAxis 
+                <YAxis
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 12, fill: '#64748B' }}
                 />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{
                     backgroundColor: '#FFFFFF',
                     border: '1px solid #E2E8F0',
@@ -109,9 +112,9 @@ const CourseAnalyticsPreview = ({ courses }) => {
                   }}
                   formatter={(value) => [`${value} hours`, 'Study Time']}
                 />
-                <Bar 
-                  dataKey="hours" 
-                  fill="#3B82F6" 
+                <Bar
+                  dataKey="hours"
+                  fill="#3B82F6"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -124,7 +127,7 @@ const CourseAnalyticsPreview = ({ courses }) => {
           <h4 className="text-sm font-medium text-text-primary mb-4">Course Progress Distribution</h4>
           <div className="h-48 flex items-center justify-center">
             {totalCourses > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" key={chartKey}>
                 <PieChart>
                   <Pie
                     data={progressData}
@@ -139,7 +142,7 @@ const CourseAnalyticsPreview = ({ courses }) => {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{
                       backgroundColor: '#FFFFFF',
                       border: '1px solid #E2E8F0',
@@ -157,13 +160,13 @@ const CourseAnalyticsPreview = ({ courses }) => {
               </div>
             )}
           </div>
-          
+
           {/* Legend */}
           {totalCourses > 0 && (
-            <div className="flex justify-center space-x-4 mt-4">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 max-w-xs mx-auto">
               {progressData.map((item, index) => (
                 <div key={index} className="flex items-center space-x-2">
-                  <div 
+                  <div
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
@@ -179,21 +182,21 @@ const CourseAnalyticsPreview = ({ courses }) => {
       <div className="mt-6 pt-6 border-t border-border">
         <h4 className="text-sm font-medium text-text-primary mb-3">Quick Insights</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center space-x-3 p-3 bg-accent-50 rounded-lg">
-            <Icon name="TrendingUp" size={16} className="text-accent" />
+          <div className="flex items-center space-x-3 p-3 bg-accent rounded-lg">
+            <Icon name="TrendingUp" size={16} className="icon-on-colored" />
             <div>
               <p className="text-sm font-medium text-text-primary">Best Performance</p>
               <p className="text-xs text-text-secondary">
-                {courses.length > 0 
+                {courses.length > 0
                   ? `${courses.reduce((best, course) => course.currentGrade > best.currentGrade ? course : best, courses[0])?.name || 'N/A'}`
                   : 'No courses yet'
                 }
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3 p-3 bg-warning-50 rounded-lg">
-            <Icon name="Clock" size={16} className="text-warning" />
+            <Icon name="Clock" size={16} className="icon-on-colored" />
             <div>
               <p className="text-sm font-medium text-text-primary">Study Streak</p>
               <p className="text-xs text-text-secondary">5 days this week</p>

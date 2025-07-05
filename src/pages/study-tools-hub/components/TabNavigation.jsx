@@ -45,7 +45,7 @@ const TabNavigation = ({ activeTab, onTabChange, tabCounts }) => {
             className={`
               flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200
               ${activeTab === tab.id
-                ? 'bg-primary text-primary-foreground shadow-sm'
+                ? 'bg-primary text-primary-foreground shadow-sm text-on-colored'
                 : 'text-text-secondary hover:text-text-primary hover:bg-secondary-50'
               }
             `}
@@ -60,8 +60,8 @@ const TabNavigation = ({ activeTab, onTabChange, tabCounts }) => {
               <span className={`
                 px-2 py-0.5 rounded-full text-xs font-medium
                 ${activeTab === tab.id
-                  ? 'bg-primary-foreground bg-opacity-20 text-primary-foreground'
-                  : 'bg-secondary-100 text-text-muted'
+                  ? 'bg-primary-foreground bg-opacity-20 text-primary-foreground text-on-colored'
+                  : 'bg-secondary-100 text-text-muted text-on-colored'
                 }
               `}>
                 {tab.count}

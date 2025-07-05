@@ -37,7 +37,7 @@ const AIInsightsPanel = ({ insights }) => {
     <div className="bg-surface rounded-lg border border-border p-6 card-elevation">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
-          <Icon name="Brain" size={20} className="text-primary" />
+          <Icon name="Brain" size={20} className="text-black dark:text-white" />
           <h3 className="text-lg font-semibold text-text-primary">AI Insights</h3>
         </div>
         <Button variant="ghost" iconName="RefreshCw" iconSize={16}>
@@ -55,11 +55,11 @@ const AIInsightsPanel = ({ insights }) => {
               <Icon 
                 name={getInsightIcon(insight.type)} 
                 size={20} 
-                className={`mt-0.5 ${getInsightColor(insight.type)}`}
+                className="mt-0.5 text-black dark:text-white"
               />
               <div className="flex-1">
-                <h4 className="font-medium text-text-primary mb-1">{insight.title}</h4>
-                <p className="text-sm text-text-secondary mb-3">{insight.description}</p>
+                <h4 className="font-medium text-black dark:text-white mb-1">{insight.title}</h4>
+                <p className="text-sm text-black dark:text-white mb-3">{insight.description}</p>
                 
                 {insight.action && (
                   <Button 

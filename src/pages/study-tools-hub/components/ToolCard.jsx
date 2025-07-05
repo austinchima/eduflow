@@ -21,26 +21,26 @@ const ToolCard = ({ tool, onStart, onEdit, onShare }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
-        return 'text-success bg-success-50';
+        return 'text-success bg-success-50 text-on-colored';
       case 'in-progress':
-        return 'text-warning bg-warning-50';
+        return 'text-warning bg-warning-50 text-on-colored';
       case 'not-started':
-        return 'text-text-muted bg-secondary-100';
+        return 'text-text-muted bg-secondary-100 text-on-colored';
       default:
-        return 'text-text-muted bg-secondary-100';
+        return 'text-text-muted bg-secondary-100 text-on-colored';
     }
   };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'easy':
-        return 'text-success bg-success-50';
+        return 'text-success bg-success-50 text-on-colored';
       case 'medium':
-        return 'text-warning bg-warning-50';
+        return 'text-warning bg-warning-50 text-on-colored';
       case 'hard':
-        return 'text-error bg-error-50';
+        return 'text-error bg-error-50 text-on-colored';
       default:
-        return 'text-text-muted bg-secondary-100';
+        return 'text-text-muted bg-secondary-100 text-on-colored';
     }
   };
 
@@ -50,7 +50,7 @@ const ToolCard = ({ tool, onStart, onEdit, onShare }) => {
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
-            <Icon name={getToolIcon(tool.type)} size={20} color="var(--color-primary)" />
+            <Icon name={getToolIcon(tool.type)} size={20} className="icon-contrast" />
           </div>
           <div>
             <h3 className="font-semibold text-text-primary text-sm">{tool.title}</h3>
@@ -83,18 +83,18 @@ const ToolCard = ({ tool, onStart, onEdit, onShare }) => {
         {/* Stats */}
         <div className="flex items-center space-x-4 text-xs text-text-muted">
           <div className="flex items-center space-x-1">
-            <Icon name="Calendar" size={12} />
+            <Icon name="Calendar" size={12} className="icon-contrast" />
             <span>{tool.createdDate}</span>
           </div>
           {tool.completionRate && (
             <div className="flex items-center space-x-1">
-              <Icon name="Target" size={12} />
+              <Icon name="Target" size={12} className="icon-contrast" />
               <span>{tool.completionRate}% complete</span>
             </div>
           )}
           {tool.score && (
             <div className="flex items-center space-x-1">
-              <Icon name="Award" size={12} />
+              <Icon name="Award" size={12} className="icon-contrast" />
               <span>{tool.score}% score</span>
             </div>
           )}
@@ -116,7 +116,7 @@ const ToolCard = ({ tool, onStart, onEdit, onShare }) => {
         
         {tool.dueDate && (
           <div className="flex items-center space-x-1 text-xs text-text-muted">
-            <Icon name="Clock" size={12} />
+            <Icon name="Clock" size={12} className="icon-contrast" />
             <span>Due {tool.dueDate}</span>
           </div>
         )}

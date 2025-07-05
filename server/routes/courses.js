@@ -3,8 +3,8 @@ const router = express.Router();
 const courseController = require('../controllers/courseController');
 const auth = require('../middleware/auth');
 
-// Get all courses for a user
-router.get('/users/:userId/courses', auth, courseController.getUserCourses);
+// Get all courses for the authenticated user
+router.get('/users/courses', auth, courseController.getUserCourses);
 // Create a new course
 router.post('/courses', auth, courseController.createCourse);
 // Update a course

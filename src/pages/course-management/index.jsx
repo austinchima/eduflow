@@ -13,14 +13,11 @@ import CourseAnalyticsPreview from './components/CourseAnalyticsPreview';
 import { useUser } from '../../context/UserContext';
 import { generateCourseContent } from '../../services/aiService';
 import StudyCourseContent from './components/StudyCourseContent';
-import jsPDF from 'jspdf';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import StudyCoursePage from './components/StudyCoursePage';
 
 const CourseManagement = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedCourseForUpload, setSelectedCourseForUpload] = useState(null);
-  const [showUploadArea, setShowUploadArea] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('All Semesters');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -33,11 +30,26 @@ const CourseManagement = () => {
   const [isContentLoading, setIsContentLoading] = useState(false);
   const [contentError, setContentError] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [quickUploadCourseId, setQuickUploadCourseId] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState(null);
+  const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+  const [courseToArchive, setCourseToArchive] = useState(null);
 
   const { academic, actions, user } = useUser();
   const { courses } = academic;
   const navigate = useNavigate();
+
+  // Debug: Check for duplicate course IDs
+  useEffect(() => {
+    const allCourseIds = courses.map(c => c.id);
+    const duplicateIds = allCourseIds.filter((id, idx) => allCourseIds.indexOf(id) !== idx);
+    if (duplicateIds.length > 0) {
+      console.warn('Duplicate course IDs found in courses:', duplicateIds);
+      console.warn('Total courses:', courses.length, 'Unique courses:', new Set(allCourseIds).size);
+      // Auto-cleanup duplicates
+      actions.cleanupDuplicateCourses();
+    }
+  }, [courses, actions]);
 
   // Filter and sort courses
   const filteredAndSortedCourses = React.useMemo(() => {
@@ -71,8 +83,17 @@ const CourseManagement = () => {
     return filtered;
   }, [courses, searchTerm, selectedSemester, selectedStatus, sortBy]);
 
-  const handleAddCourse = (newCourse) => {
-    actions.addCourse(newCourse);
+  const handleAddCourse = async (newCourse) => {
+    console.log('CourseManagement: handleAddCourse called with:', newCourse);
+    try {
+      console.log('CourseManagement: Calling actions.addCourse');
+      await actions.addCourse(newCourse);
+      console.log('CourseManagement: actions.addCourse completed');
+      // Course will be automatically added to the state by the action
+    } catch (error) {
+      console.error('Error adding course:', error);
+      // You could add a toast notification here
+    }
   };
 
   const handleEditCourse = (course) => {
@@ -80,14 +101,12 @@ const CourseManagement = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleUploadMaterials = (course) => {
-    setSelectedCourseForUpload(course);
-    setShowUploadArea(true);
-  };
-
-  const handleArchiveCourse = (course) => {
-    if (window.confirm('Are you sure you want to archive this course?')) {
-      actions.updateCourse(course.id, { status: 'archived' });
+  const handleArchiveCourse = (course, newStatus) => {
+    if (newStatus === 'active') {
+      actions.updateCourse(course.id, { status: 'active' });
+    } else {
+      setCourseToArchive(course);
+      setIsArchiveModalOpen(true);
     }
   };
 
@@ -101,9 +120,27 @@ const CourseManagement = () => {
   };
 
   const handleDeleteCourse = (courseId) => {
-    if (window.confirm('Are you sure you want to delete this course?')) {
-      actions.removeCourse(courseId);
+    setCourseToDelete(courseId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDeleteCourse = async () => {
+    if (courseToDelete) {
+      try {
+        // The removeCourse action will handle the API call and state update
+        await actions.removeCourse(courseToDelete);
+        setIsDeleteModalOpen(false);
+        setCourseToDelete(null);
+      } catch (error) {
+        console.error('Error deleting course:', error);
+        // The error will be handled by the UserContext
+      }
     }
+  };
+
+  const cancelDeleteCourse = () => {
+    setIsDeleteModalOpen(false);
+    setCourseToDelete(null);
   };
 
   const handleUpdateCourseGrade = (courseId, newGrade) => {
@@ -116,21 +153,6 @@ const CourseManagement = () => {
 
   const handleUpdateCourseStatus = (courseId, newStatus) => {
     actions.updateCourse(courseId, { status: newStatus });
-  };
-
-  const handleMaterialUpload = (course, materials) => {
-    if (!course || !materials || materials.length === 0) {
-      console.warn('No course or materials provided for upload:', { course, materials });
-      return;
-    }
-    const updatedMaterials = Array.isArray(course.materials) ? [...course.materials, ...materials] : [...materials];
-    console.log('Uploading materials to course:', course.name, materials);
-    actions.updateCourse(course.id, {
-      materialCount: updatedMaterials.length,
-      materials: updatedMaterials
-    });
-    setShowUploadArea(false);
-    setSelectedCourseForUpload(null);
   };
 
   const getUniqueSemesters = () => {
@@ -195,6 +217,19 @@ const CourseManagement = () => {
       }
     });
     doc.save(`${course.name.replace(/\s+/g, '_')}_content.pdf`);
+  };
+
+  const confirmArchiveCourse = () => {
+    if (courseToArchive) {
+      actions.updateCourse(courseToArchive.id, { status: 'archived' });
+      setIsArchiveModalOpen(false);
+      setCourseToArchive(null);
+    }
+  };
+
+  const cancelArchiveCourse = () => {
+    setIsArchiveModalOpen(false);
+    setCourseToArchive(null);
   };
 
   return (
@@ -263,66 +298,9 @@ const CourseManagement = () => {
                 setSortBy={setSortBy}
                 semesters={getUniqueSemesters()}
               />
-
-              {/* Upload Area */}
-              {showUploadArea && (
-                <div className="mb-6">
-                  <MaterialUploadArea
-                    course={selectedCourseForUpload}
-                    onUpload={handleMaterialUpload}
-                    onClose={() => {
-                      setShowUploadArea(false);
-                      setSelectedCourseForUpload(null);
-                    }}
-                  />
-                  <div className="flex justify-end mt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setShowUploadArea(false);
-                        setSelectedCourseForUpload(null);
-                      }}
-                      iconName="X"
-                      iconSize={16}
-                    >
-                      Close Upload
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Quick Upload Button and Area */}
-              {!showUploadArea && (
-                <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
-                  <select
-                    className="border rounded px-3 py-2 text-sm"
-                    value={quickUploadCourseId}
-                    onChange={e => setQuickUploadCourseId(e.target.value)}
-                  >
-                    <option value="">Select Course for Upload</option>
-                    {courses.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      if (quickUploadCourseId) {
-                        const course = courses.find(c => String(c.id) === String(quickUploadCourseId));
-                        setSelectedCourseForUpload(course);
-                        setShowUploadArea(true);
-                      }
-                    }}
-                    iconName="Upload"
-                    iconSize={16}
-                    className="w-full sm:w-auto"
-                    disabled={!quickUploadCourseId}
-                  >
-                    Quick Upload Materials
-                  </Button>
-                </div>
-              )}
-
+              {/* Always-visible course material card list */}
+              <MaterialUploadArea courses={filteredAndSortedCourses} />
+              {/* Courses Grid/List and Analytics Sidebar */}
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 {/* Courses Section */}
                 <div className="xl:col-span-2">
@@ -358,13 +336,13 @@ const CourseManagement = () => {
                     `}>
                       {filteredAndSortedCourses.map(course => (
                         <CourseCard
-                          key={course.id}
+                          key={`card-${course.id}`}
                           course={course}
                           onEdit={handleEditCourse}
-                          onUpload={handleUploadMaterials}
                           onArchive={handleArchiveCourse}
                           onViewMaterials={handleViewMaterials}
                           onStudy={handleStudyCourse}
+                          onDelete={handleDeleteCourse}
                         />
                       ))}
                     </div>
@@ -425,69 +403,80 @@ const CourseManagement = () => {
 
           {/* Materials Modal (for viewing course materials) */}
           {isMaterialsModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-              <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
-                <button
-                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setIsMaterialsModalOpen(false)}
-                >
-                  <Icon name="X" size={20} />
-                </button>
-                <h2 className="text-xl font-semibold mb-4">Course Content for {selectedCourseForMaterials?.name}</h2>
-                {/* Uploaded Materials List */}
-                {Array.isArray(selectedCourseForMaterials?.materials) && selectedCourseForMaterials.materials.length > 0 ? (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">Uploaded Materials</h3>
-                    <ul className="space-y-2">
-                      {selectedCourseForMaterials.materials.map((mat, idx) => (
-                        <li key={mat.id || idx} className="border rounded p-3 bg-secondary-50">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <span className="font-semibold">{mat.name}</span>
-                              <span className="ml-2 text-xs text-text-secondary">({mat.type})</span>
-                            </div>
-                            <span className="text-xs text-text-muted">{mat.uploadedAt ? new Date(mat.uploadedAt).toLocaleString() : ''}</span>
-                          </div>
-                          {mat.text && (
-                            <details className="mt-2">
-                              <summary className="text-xs text-primary cursor-pointer">View Extracted Text</summary>
-                              <pre className="bg-white border rounded p-2 mt-1 text-xs max-h-40 overflow-auto whitespace-pre-wrap">{mat.text}</pre>
-                            </details>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
-                  <div className="mb-6 text-text-secondary">No materials uploaded yet.</div>
-                )}
-                {/* Existing controls and content */}
-                <div className="flex gap-2 mb-4">
-                  <button
-                    className="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark text-sm"
-                    onClick={() => handleRegenerateContent(selectedCourseForMaterials)}
-                    disabled={isContentLoading}
-                  >
-                    {isContentLoading ? 'Regenerating...' : 'Regenerate Content'}
-                  </button>
-                  <button
-                    className="bg-secondary-100 text-text-primary px-4 py-2 rounded hover:bg-secondary-200 text-sm"
-                    onClick={() => handleExportContent(selectedCourseForMaterials)}
-                  >
-                    Export as Text
-                  </button>
-                  <button
-                    className="bg-secondary-100 text-text-primary px-4 py-2 rounded hover:bg-secondary-200 text-sm"
-                    onClick={() => handleExportPDF(selectedCourseForMaterials)}
-                  >
-                    Export as PDF
-                  </button>
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-200 p-4">
+              <div className="bg-surface rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-text-primary">Course Materials</h2>
+                  <Button variant="ghost" onClick={() => setIsMaterialsModalOpen(false)} iconName="X" iconSize={20} className="p-2" />
                 </div>
-                <StudyCourseContent
-                  course={selectedCourseForMaterials}
-                  isLoading={isContentLoading}
-                  error={contentError}
-                />
+                <MaterialUploadArea selectedCourse={selectedCourseForMaterials} hidden={false} showUpload={false} />
+              </div>
+            </div>
+          )}
+
+          {isEditModalOpen && (
+            <AddCourseModal
+              isOpen={isEditModalOpen}
+              onClose={() => setIsEditModalOpen(false)}
+              onSave={(updatedCourse) => {
+                actions.updateCourse(selectedCourseForEdit.id, updatedCourse);
+                setIsEditModalOpen(false);
+              }}
+              initialValues={selectedCourseForEdit}
+              isEdit
+            />
+          )}
+
+          {isDeleteModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-200 p-4">
+              <div className="bg-surface rounded-lg shadow-xl w-full max-w-md p-6">
+                <div className="flex items-center mb-4">
+                  <Icon name="AlertTriangle" size={24} className="text-error mr-3" />
+                  <h2 className="text-lg font-semibold text-text-primary">Confirm Course Deletion</h2>
+                </div>
+                <div className="mb-6">
+                  <p className="text-text-secondary mb-3">
+                    Are you sure you want to delete this course? This action will permanently remove:
+                  </p>
+                  <ul className="text-sm text-text-secondary space-y-1 mb-4">
+                    <li className="flex items-center">
+                      <Icon name="Check" size={14} className="text-error mr-2" />
+                      The course and all its data
+                    </li>
+                    <li className="flex items-center">
+                      <Icon name="Check" size={14} className="text-error mr-2" />
+                      All uploaded materials and files
+                    </li>
+                    <li className="flex items-center">
+                      <Icon name="Check" size={14} className="text-error mr-2" />
+                      Generated course content and AI materials
+                    </li>
+                    <li className="flex items-center">
+                      <Icon name="Check" size={14} className="text-error mr-2" />
+                      Study progress and analytics data
+                    </li>
+                  </ul>
+                  <p className="text-xs text-text-muted font-medium">
+                    ⚠️ This action cannot be undone. All data will be permanently deleted from both the database and cloud storage.
+                  </p>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={cancelDeleteCourse}>Cancel</Button>
+                  <Button variant="error" onClick={confirmDeleteCourse}>Delete Course</Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isArchiveModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-200 p-4">
+              <div className="bg-surface rounded-lg shadow-xl w-full max-w-sm p-6">
+                <h2 className="text-lg font-semibold text-text-primary mb-4">Confirm Archive</h2>
+                <p className="mb-6 text-text-secondary">Are you sure you want to archive this course? You can restore it later from the archived courses list.</p>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={cancelArchiveCourse}>Cancel</Button>
+                  <Button variant="warning" onClick={confirmArchiveCourse}>Archive</Button>
+                </div>
               </div>
             </div>
           )}

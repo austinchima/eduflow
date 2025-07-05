@@ -9,5 +9,9 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 // Get current user
 router.get('/me', auth, authController.getUser);
+// Check username availability
+router.get('/check-username/:username', auth, authController.checkUsername);
+// Update user profile
+router.put('/users/:userId', auth, authController.updateUser);
 
 module.exports = router;

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "migrate": "node migrations/addGeneratedUsername.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +14,7 @@
   "type": "commonjs",
   "dependencies": {
     "@dotenvx/dotenvx": "^1.45.1",
+    "@google-cloud/storage": "^7.16.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",

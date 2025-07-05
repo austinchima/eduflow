@@ -31,12 +31,12 @@ const CourseAnalytics = ({ courses }) => {
         <div className="flex flex-wrap gap-2">
           {courses.map((course) => (
             <button
-              key={course.id}
+              key={`analytics-${course.id}`}
               onClick={() => setSelectedCourse(course.id)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 selectedCourse === course.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary-50 text-text-secondary hover:bg-secondary-100'
+                  ? 'bg-primary text-primary-foreground text-on-colored'
+                  : 'bg-secondary-50 text-text-secondary hover:bg-secondary-100 text-on-colored'
               }`}
             >
               {course.name}
@@ -56,9 +56,9 @@ const CourseAnalytics = ({ courses }) => {
               <p className="text-sm font-medium text-text-primary">Average Grade</p>
             </div>
             
-            <div className="text-center p-4 bg-secondary-50 rounded-lg">
-              <div className="flex items-center justify-center w-12 h-12 bg-accent-50 text-accent rounded-lg mb-2">
-                <Icon name="Clock" size={20} />
+            <div className="text-center p-4 bg-secondary-500 rounded-lg">
+              <div className="flex items-center justify-center w-12 h-12 bg-accent text-accent-foreground rounded-lg mb-2">
+                <Icon name="Clock" size={20} className="icon-on-colored" />
               </div>
               <p className="font-bold text-lg text-text-primary">{selectedCourseData.studyHours}h</p>
               <p className="text-sm font-medium text-text-secondary">Study Hours</p>
@@ -66,7 +66,7 @@ const CourseAnalytics = ({ courses }) => {
             
             <div className="text-center p-4 bg-secondary-50 rounded-lg">
               <div className="flex items-center justify-center w-12 h-12 bg-primary-50 text-primary rounded-lg mb-2">
-                <Icon name="CheckCircle" size={20} />
+                <Icon name="CheckCircle" size={20} className="icon-on-colored" />
               </div>
               <p className="font-bold text-lg text-text-primary">{selectedCourseData.completionRate}%</p>
               <p className="text-sm font-medium text-text-secondary">Completion</p>
@@ -74,7 +74,7 @@ const CourseAnalytics = ({ courses }) => {
             
             <div className="text-center p-4 bg-secondary-50 rounded-lg">
               <div className="flex items-center justify-center w-12 h-12 bg-warning-50 text-warning rounded-lg mb-2">
-                <Icon name="TrendingUp" size={20} />
+                <Icon name="TrendingUp" size={20} className="icon-on-colored" />
               </div>
               <p className="font-bold text-lg text-text-primary">+{selectedCourseData.improvement}%</p>
               <p className="text-sm font-medium text-text-secondary">Improvement</p>
@@ -106,7 +106,7 @@ const CourseAnalytics = ({ courses }) => {
             <div className="space-y-2">
               {selectedCourseData.recommendations.map((rec, index) => (
                 <div key={index} className="flex items-start space-x-3 p-3 bg-primary-50 border border-primary-100 rounded-lg">
-                  <Icon name="Lightbulb" size={16} className="text-primary mt-0.5" />
+                  <Icon name="Lightbulb" size={16} className="icon-on-colored mt-0.5" />
                   <p className="text-sm text-text-primary">{rec}</p>
                 </div>
               ))}

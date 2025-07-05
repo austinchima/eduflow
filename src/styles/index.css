@@ -2,6 +2,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: Inter;
+  /* Prevent background flashing during theme transitions */
+  transition: background-color 0.3s ease-in-out;
 }
 
 * {
@@ -9,4 +11,107 @@ body {
   line-height: normal;
   font-family: inherit;
   margin: unset;
+}
+
+/* Prevent flash of unstyled content */
+html {
+  /* Set a default background to prevent white flash */
+  background-color: #FAFBFC;
+  transition: background-color 0.3s ease-in-out;
+}
+
+/* Dark mode background */
+[data-theme="dark"] html {
+  background-color: #0F172A;
+}
+
+/* Ensure smooth transitions for all elements */
+* {
+  transition: background-color 0.3s ease-in-out, 
+              color 0.3s ease-in-out, 
+              border-color 0.3s ease-in-out;
+}
+
+/* Prevent layout shift during loading */
+.min-h-screen {
+  min-height: 100vh;
+  /* Ensure background is always visible */
+  background-color: var(--color-background, #FAFBFC);
+}
+
+/* Smooth loading transitions */
+.loading-transition {
+  transition: opacity 0.3s ease-in-out, 
+              transform 0.3s ease-in-out;
+}
+
+/* Prevent flash during authentication */
+.auth-transition {
+  transition: all 0.3s ease-in-out;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.auth-transition.loading {
+  opacity: 0.8;
+  transform: translateY(-10px);
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --color-background: #000 !important;
+  --color-surface: #111 !important;
+  --color-text: #fff !important;
+  --color-primary: #ff0 !important;
+  --color-border: #fff !important;
+}
+
+/* Large Text */
+.large-text {
+  font-size: 1.2em;
+}
+.large-text h1 { font-size: 2.5em; }
+.large-text h2 { font-size: 2em; }
+
+/* Color Blind Support */
+.color-blind {
+  --color-success: #0072B2;
+  --color-error: #D55E00;
+  --color-warning: #E69F00;
+  --color-accent: #009E73;
+}
+
+/* Reduced Motion */
+.reduced-motion *, .reduced-motion *:before, .reduced-motion *:after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Keyboard Navigation */
+.keyboard-nav :focus {
+  outline: 2px solid #1976d2 !important;
+  outline-offset: 2px;
+}
+
+/* Screen Reader Mode */
+.screen-reader-mode .visually-hidden {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
+
+/* Visually Hidden Utility */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }

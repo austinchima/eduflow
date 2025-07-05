@@ -74,11 +74,26 @@ const NavigationTiles = () => {
     return colorMap[color] || colorMap.primary;
   };
 
+  const getIconContrastClass = (color) => {
+    switch (color) {
+      case 'primary':
+        return 'icon-primary-contrast';
+      case 'accent':
+        return 'icon-accent-contrast';
+      case 'warning':
+        return 'icon-warning-contrast';
+      case 'secondary':
+        return 'text-secondary-600 dark:text-white'; // fallback for secondary
+      default:
+        return 'icon-primary-contrast';
+    }
+  };
+
   return (
     <div className="bg-surface rounded-xl p-6 shadow-md border border-border">
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
-          <Icon name="Grid3X3" size={20} color="var(--color-primary)" />
+          <Icon name="Grid3X3" size={20} className="icon-contrast" />
         </div>
         <h3 className="text-lg font-semibold text-text-primary">Quick Navigation</h3>
       </div>
@@ -94,20 +109,21 @@ const NavigationTiles = () => {
               className={`p-6 rounded-xl border-2 transition-all duration-200 text-left group ${colors.bg} ${colors.border} ${colors.hover}`}
             >
               <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${colors.bg} ${colors.text}`}>
+                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${colors.bg}`}>
                   <Icon 
                     name={tile.icon} 
                     size={24} 
                     color="currentColor"
+                    className={getIconContrastClass(tile.color)}
                   />
                 </div>
-                <div className={`px-2 py-1 rounded-full text-xs font-medium ${colors.bg} ${colors.text}`}>
+                <div className="px-2 py-1 rounded-full text-xs font-medium text-on-colored bg-on-colored">
                   {tile.stats}
                 </div>
               </div>
               
               <div className="space-y-2">
-                <h4 className={`font-semibold text-lg ${colors.text}`}>
+                <h4 className="font-semibold text-lg text-text-primary">
                   {tile.title}
                 </h4>
                 <p className="text-sm text-text-secondary">
@@ -120,7 +136,7 @@ const NavigationTiles = () => {
                   name="ArrowRight" 
                   size={20} 
                   color="currentColor"
-                  className={`${colors.text} group-hover:translate-x-1 transition-transform duration-200`}
+                  className={`group-hover:translate-x-1 transition-transform duration-200 ${getIconContrastClass(tile.color)}`}
                 />
               </div>
             </button>

@@ -25,7 +25,7 @@ const CourseGrid = ({ courses }) => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center">
-            <Icon name="BookOpen" size={20} color="var(--color-accent)" />
+            <Icon name="BookOpen" size={20} className="icon-contrast" />
           </div>
           <h3 className="text-lg font-semibold text-text-primary">Active Courses</h3>
         </div>
@@ -45,7 +45,7 @@ const CourseGrid = ({ courses }) => {
           
           return (
             <div
-              key={course.id}
+              key={`dashboard-${course.id}`}
               className="p-4 border border-border rounded-lg hover:shadow-sm transition-all duration-200 cursor-pointer"
               onClick={() => navigate('/course-management')}
             >

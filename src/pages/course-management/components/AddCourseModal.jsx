@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
+import { generateSemesterList } from '../../../utils/semesterUtils';
 
-const AddCourseModal = ({ isOpen, onClose, onSave }) => {
+const AddCourseModal = ({ isOpen, onClose, onSave, initialValues, isEdit }) => {
   const [formData, setFormData] = useState({
     name: '',
     instructor: '',
@@ -14,13 +15,19 @@ const AddCourseModal = ({ isOpen, onClose, onSave }) => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const semesters = [
-    'Fall 2024',
-    'Spring 2024',
-    'Summer 2024',
-    'Fall 2023',
-    'Spring 2023'
-  ];
+  const semesters = generateSemesterList();
+
+  useEffect(() => {
+    if (initialValues) {
+      setFormData({
+        name: initialValues.name || '',
+        instructor: initialValues.instructor || '',
+        credits: initialValues.credits || '',
+        semester: initialValues.semester || '',
+        description: initialValues.description || ''
+      });
+    }
+  }, [initialValues, isOpen]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -63,31 +70,27 @@ const AddCourseModal = ({ isOpen, onClose, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    console.log('AddCourseModal: Form submitted');
+    
     if (!validateForm()) {
+      console.log('AddCourseModal: Form validation failed');
       return;
     }
     
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const newCourse = {
-        id: Date.now(),
+      const updatedCourse = {
         ...formData,
         credits: parseInt(formData.credits),
-        currentGrade: 0,
-        materialCount: 0,
-        progress: 0,
-        status: 'active',
-        createdAt: new Date().toISOString()
       };
       
-      onSave(newCourse);
+      console.log('AddCourseModal: Calling onSave with course:', updatedCourse);
+      
+      onSave(updatedCourse);
       handleClose();
     } catch (error) {
-      console.error('Error creating course:', error);
+      console.error('Error saving course:', error);
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +115,7 @@ const AddCourseModal = ({ isOpen, onClose, onSave }) => {
       <div className="bg-surface rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-xl font-semibold text-text-primary">Add New Course</h2>
+          <h2 className="text-xl font-semibold text-text-primary">{isEdit ? 'Edit Course' : 'Add New Course'}</h2>
           <Button
             variant="ghost"
             onClick={handleClose}
@@ -226,14 +229,12 @@ const AddCourseModal = ({ isOpen, onClose, onSave }) => {
               Cancel
             </Button>
             <Button
-              type="submit"
               variant="primary"
-              className="flex-1"
-              loading={isLoading}
-              iconName="Plus"
-              iconSize={16}
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
             >
-              Add Course
+              {isEdit ? 'Save Changes' : 'Add Course'}
             </Button>
           </div>
         </form>

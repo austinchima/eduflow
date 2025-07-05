@@ -13,7 +13,7 @@ import QuizReview from './components/QuizReview';
 const QuizInterface = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { academic, actions, quizzes, user } = useUser();
+  const { actions, quizzes, user } = useUser();
   
   // Get quiz data from location state or context
   const quizId = location.state?.quizId;

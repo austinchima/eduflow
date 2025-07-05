@@ -4,17 +4,15 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Icon from '../components/AppIcon';
 import { useUser } from '../context/UserContext';
-import { dataService } from '../services/dataService';
-import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
   const { actions } = useUser();
-  const navigate = useNavigate();
   const [mode, setMode] = useState('login'); // 'login' or 'signup'
   const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
-    name: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,21 +27,19 @@ const AuthPage = () => {
     setError('');
     setSuccess('');
     setLoading(true);
-    let userId = null; // Initialize userId
     try {
       if (mode === 'login') {
-        const user = await actions.login(form.email, form.password);
-        userId = user.id;
-        setSuccess('Logged in! Redirecting...');
+        await actions.login(form.email, form.password);
+        setSuccess('Logged in successfully!');
       } else {
-        const user = await actions.signup(form.email, form.password, { name: form.name });
-        userId = user.id;
-        setSuccess('Account created! Setting up your profile...');
-      }
-
-      const isProfileComplete = await dataService.checkProfileComplete(userId);
-      if (mode === 'login' && isProfileComplete) {
-        setTimeout(() => navigate('/dashboard'), 1000);
+        // Combine first and last name for the username
+        const fullName = `${form.firstName} ${form.lastName}`.trim();
+        await actions.signup(form.email, form.password, { 
+          firstName: form.firstName,
+          lastName: form.lastName,
+          name: fullName
+        });
+        setSuccess('Account created successfully!');
       }
     } catch (err) {
       setError(err.message || 'Authentication failed');
@@ -53,8 +49,8 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="bg-surface border border-border rounded-lg p-8 max-w-md w-full shadow-lg">
+    <div className={`min-h-screen flex items-center justify-center bg-background p-4 auth-transition ${loading ? 'loading' : ''}`}>
+      <div className="bg-surface border border-border rounded-lg p-8 max-w-md w-full shadow-lg loading-transition">
         <div className="flex flex-col items-center mb-6">
           <Icon name="User" size={40} className="text-primary mb-2" />
           <h2 className="text-2xl font-bold text-text-primary mb-1">
@@ -66,13 +62,26 @@ const AuthPage = () => {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'signup' && (
-            <Input
-              label="Full Name"
-              value={form.name}
-              onChange={(e) => handleChange('name', e.target.value)}
-              placeholder="Enter your full name"
-              required
-            />
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="First Name"
+                  value={form.firstName}
+                  onChange={(e) => handleChange('firstName', e.target.value)}
+                  placeholder="Enter your first name"
+                  required
+                  disabled={loading}
+                />
+                <Input
+                  label="Last Name"
+                  value={form.lastName}
+                  onChange={(e) => handleChange('lastName', e.target.value)}
+                  placeholder="Enter your last name"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </>
           )}
           <Input
             label="Email"
@@ -81,6 +90,7 @@ const AuthPage = () => {
             onChange={(e) => handleChange('email', e.target.value)}
             placeholder="Enter your email"
             required
+            disabled={loading}
           />
           <Input
             label="Password"
@@ -89,6 +99,7 @@ const AuthPage = () => {
             onChange={(e) => handleChange('password', e.target.value)}
             placeholder="Enter your password"
             required
+            disabled={loading}
           />
           {error && <div className="text-red-600 text-sm">{error}</div>}
           {success && <div className="text-green-600 text-sm">{success}</div>}
@@ -104,7 +115,14 @@ const AuthPage = () => {
               setMode(mode === 'login' ? 'signup' : 'login');
               setError('');
               setSuccess('');
+              setForm({
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: '',
+              });
             }}
+            disabled={loading}
           >
             {mode === 'login'
               ? "Don't have an account? Sign up"

@@ -42,8 +42,8 @@ const AiRecommendations = ({ recommendations }) => {
   return (
     <div className="bg-surface rounded-xl p-6 shadow-md border border-border">
       <div className="flex items-center space-x-3 mb-6">
-        <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center">
-          <Icon name="Brain" size={20} color="var(--color-accent)" />
+        <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+          <Icon name="Brain" size={20} className="icon-on-colored" />
         </div>
         <h3 className="text-lg font-semibold text-text-primary">AI Recommendations</h3>
       </div>
@@ -60,7 +60,7 @@ const AiRecommendations = ({ recommendations }) => {
                   <Icon 
                     name={getPriorityIcon(recommendation.priority)} 
                     size={16} 
-                    color="currentColor"
+                    className="icon-on-colored"
                   />
                 </div>
                 <div className="flex-1">
@@ -72,11 +72,11 @@ const AiRecommendations = ({ recommendations }) => {
                   </p>
                   <div className="flex items-center space-x-4 text-xs text-text-muted">
                     <div className="flex items-center space-x-1">
-                      <Icon name="Clock" size={12} />
+                      <Icon name="Clock" size={12} className="icon-on-colored" />
                       <span>{recommendation.estimatedTime}</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <Icon name="Target" size={12} />
+                      <Icon name="Target" size={12} className="icon-on-colored" />
                       <span>{recommendation.subject}</span>
                     </div>
                   </div>
@@ -91,7 +91,7 @@ const AiRecommendations = ({ recommendations }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1 text-xs text-text-muted">
-                  <Icon name="TrendingUp" size={12} />
+                  <Icon name="TrendingUp" size={12} className="icon-on-colored" />
                   <span>+{recommendation.expectedImprovement}% improvement</span>
                 </div>
               </div>
@@ -112,7 +112,7 @@ const AiRecommendations = ({ recommendations }) => {
 
       {recommendations.length === 0 && (
         <div className="text-center py-8">
-          <Icon name="Brain" size={48} color="var(--color-text-muted)" className="mx-auto mb-4" />
+          <Icon name="Brain" size={48} className="icon-on-colored mx-auto mb-4" />
           <p className="text-text-muted mb-2">No recommendations yet</p>
           <p className="text-sm text-text-muted">
             Complete some activities to get personalized AI suggestions
@@ -123,7 +123,7 @@ const AiRecommendations = ({ recommendations }) => {
       <div className="mt-6 pt-4 border-t border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 text-sm text-text-muted">
-            <Icon name="Sparkles" size={14} />
+            <Icon name="Sparkles" size={14} className="icon-on-colored" />
             <span>Powered by AI learning analytics</span>
           </div>
           <Button

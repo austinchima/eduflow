@@ -3,13 +3,19 @@ import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import { uploadMaterial } from '../../../utils/materialUpload';
 import { useUser } from '../../../context/UserContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hidden }) => {
+const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hidden, showUpload = true, courses: propCourses }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [downloadingId, setDownloadingId] = useState(null);
   const inputRef = fileInputRef || useRef(null);
-  const { user } = useUser();
+  const { user, actions, academic } = useUser();
+  const courses = propCourses || academic?.courses || [];
+  const [expandedCourseId, setExpandedCourseId] = useState(null);
+  const [uploadingCourseId, setUploadingCourseId] = useState(null);
 
   const acceptedFileTypes = {
     'application/pdf': '.pdf',
@@ -41,27 +47,66 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
-    console.log('Files selected:', files);
-    handleFiles(files);
+    handleFiles(files, uploadingCourseId);
   };
 
   // Fetch all uploaded files for the user and course
   useEffect(() => {
     const fetchUploadedFiles = async () => {
       if (!selectedCourse?.id) return;
+      try {
+        const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials?courseId=${selectedCourse.id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log('Materials API response (fetch):', responseData);
+          const materials = responseData.materials || responseData; // Handle both nested and direct response
+          console.log('Extracted materials (fetch):', materials);
+          console.log('Sample material object:', materials[0]);
+          setUploadedFiles(materials);
+          if (selectedCourse?.id && actions?.updateCourse) {
+            actions.updateCourse(selectedCourse.id, { materialCount: materials.length });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch materials:', err);
+      }
     };
     fetchUploadedFiles();
   }, [selectedCourse]);
 
-  // Enhanced handleFiles with progress
-  const handleFiles = async (files) => {
+  // Only initialize toast container once
+  useEffect(() => {
+    if (!document.getElementById('toast-container')) {
+      const div = document.createElement('div');
+      div.id = 'toast-container';
+      document.body.appendChild(div);
+    }
+  }, []);
+
+  // Handler for plus button: open file picker for a specific course
+  const handlePlusClick = (courseId) => {
+    setUploadingCourseId(courseId);
+    inputRef.current.value = null; // Reset file input
+    inputRef.current.click();
+  };
+
+  // Enhanced handleFiles with progress, now takes courseId
+  const handleFiles = async (files, courseId) => {
+    if (!courseId) {
+      alert('Please select a course before uploading files.');
+      return;
+    }
     const validFiles = files.filter(file => {
       const isValidType = Object.keys(acceptedFileTypes).includes(file.type);
       const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB limit
       return isValidType && isValidSize;
     });
     if (validFiles.length === 0) {
-      console.warn('No valid files selected for upload.');
+      toast.error('No valid files selected for upload.', { containerId: 'toast-container' });
       return;
     }
     const uploadedMaterials = [];
@@ -73,24 +118,43 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
       }));
       try {
         // Upload to backend
-        const material = await uploadMaterial(file, user.id, selectedCourse.id);
+        const material = await uploadMaterial(file, courseId);
         setUploadProgress(prev => ({
           ...prev,
           [fileId]: { ...prev[fileId], progress: 100, status: 'completed' }
         }));
         uploadedMaterials.push(material);
+        toast.success(`Uploaded ${file.name} successfully!`, { containerId: 'toast-container' });
       } catch (err) {
         setUploadProgress(prev => ({
           ...prev,
           [fileId]: { ...prev[fileId], status: 'error' }
         }));
+        toast.error(`Failed to upload ${file.name}.`, { containerId: 'toast-container' });
         console.error('File upload failed:', err);
       }
     }
-    setUploadedFiles(prev => [...uploadedMaterials, ...prev]);
+    // Refresh uploaded files list for the course
+    try {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials?courseId=${courseId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        const materials = responseData.materials || responseData;
+        // Update the course's materials in context
+        actions.updateCourse(courseId, { materials, materialCount: materials.length });
+      }
+    } catch (err) {
+      console.error('Failed to fetch materials:', err);
+    }
     setUploadProgress({});
+    setUploadingCourseId(null);
     if (onUploadComplete && uploadedMaterials.length > 0) {
-      onUploadComplete(selectedCourse, uploadedMaterials);
+      const course = courses.find(c => c.id === courseId);
+      onUploadComplete(course, uploadedMaterials);
     }
   };
 
@@ -110,138 +174,174 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
     return 'File';
   };
 
+  const handleDeleteMaterial = async (materialId) => {
+    if (window.confirm('Are you sure you want to delete this material?')) {
+      try {
+        await actions.deleteMaterial(materialId, selectedCourse.id);
+        // Remove from local state as well
+        setUploadedFiles(prev => {
+          const updated = prev.filter(file => file.id !== materialId);
+          if (selectedCourse?.id && actions?.updateCourse) {
+            actions.updateCourse(selectedCourse.id, { materialCount: updated.length });
+          }
+          return updated;
+        });
+      } catch (error) {
+        console.error('Error deleting material:', error);
+      }
+    }
+  };
+
+  const handleDownloadMaterial = async (materialId) => {
+    setDownloadingId(materialId);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials/download/${materialId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to get download link');
+      const { material } = await response.json();
+      window.open(material.signedUrl, '_blank');
+    } catch (err) {
+      toast.error('Failed to download file. Please try again.', { containerId: 'toast-container' });
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  // Handler for deleting a course
+  const handleDeleteCourse = async (courseId) => {
+    const course = courses.find(c => c.id === courseId);
+    const courseName = course?.name || 'this course';
+    
+    if (window.confirm(`Are you sure you want to delete "${courseName}" and all its materials?\n\nThis will permanently delete:\n• The course and all its data\n• All uploaded materials and files\n• Generated course content and AI materials\n• Study progress and analytics data\n\n⚠️ This action cannot be undone. All data will be permanently deleted from both the database and cloud storage.`)) {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/courses/${courseId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete course');
+        }
+        
+        const result = await response.json();
+        actions.removeCourse(courseId);
+        
+        // Show detailed success message
+        const details = result.details || {};
+        const message = `Course "${courseName}" deleted successfully.`;
+        const detailsMessage = details.gcsFilesDeleted > 0 
+          ? ` Deleted ${details.materialsDeleted} materials and ${details.gcsFilesDeleted} files from cloud storage.`
+          : ` Deleted ${details.materialsDeleted} materials.`;
+        
+        toast.success(message + detailsMessage, { containerId: 'toast-container' });
+      } catch (err) {
+        console.error('Error deleting course:', err);
+        toast.error(`Failed to delete course: ${err.message}`, { containerId: 'toast-container' });
+      }
+    }
+  };
+
+  // Handler for expanding/collapsing a course card
+  const toggleExpandCourse = (courseId) => {
+    setExpandedCourseId(expandedCourseId === courseId ? null : courseId);
+  };
+
   return (
     <div className={hidden ? 'hidden' : 'bg-surface border border-border rounded-lg p-6'}>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-text-primary">Upload Course Materials</h3>
-        {selectedCourse && (
-          <span className="text-sm text-text-secondary bg-secondary-50 px-3 py-1 rounded-full">
-            {selectedCourse.name}
-          </span>
+      <h3 className="text-lg font-semibold text-text-primary mb-4">Upload Course Materials</h3>
+      {/* Thin course card list */}
+      <div className="space-y-2">
+        {courses.length === 0 && (
+          <div className="text-center text-text-secondary text-sm">No courses found.</div>
         )}
-      </div>
-
-      {/* Upload Area */}
-      <div
-        className={`
-          border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200
-          ${isDragOver 
-            ? 'border-primary bg-primary-50' :'border-border hover:border-primary hover:bg-secondary-50'
-          }
-        `}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <Icon 
-          name="Upload" 
-          size={48} 
-          className={`mx-auto mb-4 ${isDragOver ? 'text-primary' : 'text-text-muted'}`} 
-        />
-        <h4 className="text-lg font-medium text-text-primary mb-2">
-          Drop files here or click to upload
-        </h4>
-        <p className="text-sm text-text-secondary mb-4">
-          Supports PDF, DOC, DOCX, TXT, JPG, PNG, PPT, PPTX (Max 10MB each)
-        </p>
-        
-        <Button
-          variant="primary"
-          onClick={() => inputRef.current?.click()}
-          iconName="Plus"
-          iconSize={16}
-        >
-          Select Files
-        </Button>
-        
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          accept={Object.values(acceptedFileTypes).join(',')}
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-      </div>
-
-      {/* Upload Progress */}
-      {Object.keys(uploadProgress).length > 0 && (
-        <div className="mt-6 space-y-3">
-          <h4 className="text-sm font-medium text-text-primary">Uploading Files</h4>
-          {Object.entries(uploadProgress).map(([fileId, progress]) => (
-            <div key={fileId} className="bg-secondary-50 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center space-x-2">
-                  <Icon name={getFileIcon('')} size={16} className="text-text-secondary" />
-                  <span className="text-sm font-medium text-text-primary truncate">
-                    {progress.fileName}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {progress.status === 'uploading' && (
-                    <span className="text-xs text-text-secondary">{progress.progress}%</span>
-                  )}
-                  {progress.status === 'processing' && (
-                    <div className="flex items-center space-x-1">
-                      <Icon name="Brain" size={14} className="text-primary animate-pulse" />
-                      <span className="text-xs text-primary">AI Processing...</span>
-                    </div>
-                  )}
-                  {progress.status === 'completed' && (
-                    <Icon name="CheckCircle" size={16} className="text-success" />
-                  )}
-                  {progress.status === 'error' && (
-                    <Icon name="XCircle" size={16} className="text-error" />
-                  )}
-                </div>
-              </div>
-              
-              {progress.status === 'uploading' && (
-                <div className="w-full h-2 bg-secondary-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-primary transition-all duration-300"
-                    style={{ width: `${progress.progress}%` }}
-                  />
-                </div>
-              )}
-              
-              {progress.status === 'processing' && (
-                <div className="w-full h-2 bg-secondary-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary animate-pulse" />
-                </div>
-              )}
+        {courses.map(course => (
+          <div
+            key={course.id}
+            className="flex items-center justify-between bg-white border border-border rounded-md px-4 py-2 shadow-sm hover:bg-secondary-50 cursor-pointer transition-all"
+            onClick={() => toggleExpandCourse(course.id)}
+          >
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-text-primary">{course.name}</span>
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Uploaded Files List */}
-      {uploadedFiles.length > 0 && (
-        <div className="mt-6">
-          <h4 className="text-sm font-medium text-text-primary mb-3">All Uploaded Files</h4>
-          <div className="space-y-2">
-            {uploadedFiles.map(file => (
-              <div key={file.id} className="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <Icon name={getFileIcon(file.type || file.file_url)} size={16} className="text-primary" />
-                  <div>
-                    <p className="text-sm font-medium text-text-primary">{file.name || file.file_url.split('/').pop()}</p>
-                    <p className="text-xs text-text-secondary">{file.uploaded_at ? new Date(file.uploaded_at).toLocaleString() : ''}</p>
-                  </div>
-                </div>
-                <a
-                  href={`https://${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/sign/course-materials/${file.file_url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-primary underline"
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-text-secondary">{course.materials?.length || 0} items</span>
+              {/* Plus button for uploading files for this course */}
+              <button
+                className="text-primary hover:text-primary-dark p-1"
+                title="Upload Files"
+                onClick={e => { e.stopPropagation(); handlePlusClick(course.id); }}
+              >
+                <Icon name="Plus" size={16} />
+              </button>
+              {/* Show trash icon if user is owner */}
+              {course.userId === user.id && (
+                <button
+                  className="text-error hover:text-error-dark p-1"
+                  title="Delete Course"
+                  onClick={e => { e.stopPropagation(); handleDeleteCourse(course.id); }}
                 >
-                  Download
-                </a>
-              </div>
-            ))}
+                  <Icon name="Trash2" size={16} />
+                </button>
+              )}
+              <button className="ml-2 text-text-secondary focus:outline-none" tabIndex={-1} aria-label="Expand">
+                <Icon name={expandedCourseId === course.id ? 'ChevronUp' : 'ChevronDown'} size={18} />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
+      {/* Expanded material list for selected course */}
+      {courses.map(course => (
+        expandedCourseId === course.id && (
+          <div key={`materials-${course.id}`} className="ml-4 mt-2 mb-4 border-l-2 border-primary-100 pl-4">
+            {course.materials && course.materials.length > 0 ? (
+              <div className="space-y-2">
+                {course.materials.map(material => (
+                  <div key={material.id} className="flex items-center justify-between bg-secondary-50 rounded px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <Icon name={getFileIcon(material.mimetype || '')} size={16} className="text-primary" />
+                      <span className="text-sm text-text-primary">{material.originalName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="text-xs text-primary underline"
+                        onClick={e => { e.stopPropagation(); handleDownloadMaterial(material.id); }}
+                      >
+                        Download
+                      </button>
+                      <button
+                        className="text-xs text-error hover:text-error-dark"
+                        onClick={e => { e.stopPropagation(); handleDeleteMaterial(material.id, course.id); }}
+                      >
+                        <Icon name="Trash2" size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-xs text-text-secondary">No materials uploaded for this course.</div>
+            )}
+          </div>
+        )
+      ))}
+      {/* File input is hidden, triggered by plus button for each course */}
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        accept={Object.values(acceptedFileTypes).join(',')}
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+      {/* Toast Container (for upload progress, etc.) remains as before */}
+      <div id="toast-container" style={{ position: 'fixed', bottom: 24, left: 0, right: 0, zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' }} />
     </div>
   );
 };

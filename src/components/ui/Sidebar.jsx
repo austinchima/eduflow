@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../AppIcon';
 import Button from './Button';
+import { useTheme } from '../../context/ThemeContext';
+import { useUser } from '../../context/UserContext';
+import { dataService } from '../../services/dataService';
 
 const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
   const [isCollapsed, setIsCollapsed] = useState(controlledCollapsed ?? false);
@@ -9,6 +12,11 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
   const [isStudyMode, setIsStudyMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { theme, toggleTheme, isDark } = useTheme();
+  const { user, actions } = useUser();
+
+  // Check if user is authenticated
+  const isAuthenticated = user && user.id && localStorage.getItem('token');
 
   const navigationItems = [
     {
@@ -93,6 +101,11 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
     });
   };
 
+  const handleThemeToggle = () => {
+    // Simply toggle the theme without backend sync for now
+    toggleTheme();
+  };
+
   if (isStudyMode && isMobile) {
     return null;
   }
@@ -120,7 +133,7 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border">
           {(!isCollapsed || !isMobile) && !isStudyMode && (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={toggleSidebar} title="Toggle Sidebar">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Icon name="GraduationCap" size={20} color="white" />
               </div>
@@ -130,16 +143,6 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
                 </div>
               )}
             </div>
-          )}
-          
-          {!isMobile && (
-            <Button
-              variant="ghost"
-              onClick={toggleSidebar}
-              className="p-2"
-              iconName={isCollapsed ? "ChevronRight" : "ChevronLeft"}
-              iconSize={16}
-            />
           )}
         </div>
 
@@ -165,7 +168,8 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
                   >
                     <Icon 
                       name={item.icon} 
-                      size={20} 
+                      size={isCollapsed ? 28 : 20} 
+                      className={isCollapsed ? 'mx-auto' : ''}
                       color={isActive ? 'currentColor' : 'currentColor'}
                     />
                     
@@ -191,8 +195,48 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
         </nav>
 
         {/* Footer */}
-        {!isCollapsed && !isStudyMode && (
-          <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border">
+          {/* Theme Toggle Button */}
+          {isAuthenticated && (
+            <div className="mb-3">
+              <button
+                onClick={handleThemeToggle}
+                className={`
+                  w-full flex items-center justify-center space-x-3 px-3 py-2.5 rounded-lg
+                  transition-all duration-200 ease-smooth group relative
+                  text-text-secondary hover:text-text-primary hover:bg-secondary-50
+                  ${isCollapsed ? 'justify-center' : 'justify-start'}
+                `}
+                title={isCollapsed ? `Switch to ${isDark ? 'light' : 'dark'} mode` : ''}
+              >
+                <Icon 
+                  name={isDark ? 'Sun' : 'Moon'} 
+                  size={isCollapsed ? 20 : 18} 
+                  className={isCollapsed ? 'mx-auto' : ''}
+                />
+                
+                {!isCollapsed && !isStudyMode && (
+                  <span className="font-medium text-sm">
+                    {isDark ? 'Light Mode' : 'Dark Mode'}
+                  </span>
+                )}
+
+                {/* Tooltip for collapsed state */}
+                {(isCollapsed || isStudyMode) && (
+                  <div className="
+                    absolute left-full ml-2 px-2 py-1 bg-text-primary text-white text-xs
+                    rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                    pointer-events-none whitespace-nowrap z-200
+                  ">
+                    {isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                  </div>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Existing Footer Content */}
+          {!isCollapsed && !isStudyMode && (
             <div className="flex items-center space-x-3 text-text-muted">
               <Icon name="User" size={16} />
               <div className="text-sm">
@@ -200,8 +244,8 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
                 <p className="text-xs">Academic Year 2024</p>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </aside>
 
       {/* Mobile Menu Button */}

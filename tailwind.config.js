@@ -8,66 +8,75 @@ module.exports = {
     extend: {
       colors: {
         // Primary Colors
-        'primary': '#2563EB', // blue-600
-        'primary-50': '#EFF6FF', // blue-50
-        'primary-100': '#DBEAFE', // blue-100
-        'primary-500': '#3B82F6', // blue-500
-        'primary-600': '#2563EB', // blue-600
-        'primary-700': '#1D4ED8', // blue-700
-        'primary-foreground': '#FFFFFF', // white
+        'primary': 'var(--color-primary)',
+        'primary-50': 'var(--color-primary-50)',
+        'primary-100': 'var(--color-primary-100)',
+        'primary-500': 'var(--color-primary-500)',
+        'primary-600': 'var(--color-primary-600)',
+        'primary-700': 'var(--color-primary-700)',
+        'primary-800': 'var(--color-primary-800)',
+        'primary-foreground': 'var(--color-primary-foreground)',
 
         // Secondary Colors
-        'secondary': '#64748B', // slate-500
-        'secondary-50': '#F8FAFC', // slate-50
-        'secondary-100': '#F1F5F9', // slate-100
-        'secondary-200': '#E2E8F0', // slate-200
-        'secondary-500': '#64748B', // slate-500
-        'secondary-600': '#475569', // slate-600
-        'secondary-foreground': '#FFFFFF', // white
+        'secondary': 'var(--color-secondary)',
+        'secondary-50': 'var(--color-secondary-50)',
+        'secondary-100': 'var(--color-secondary-100)',
+        'secondary-200': 'var(--color-secondary-200)',
+        'secondary-500': 'var(--color-secondary-500)',
+        'secondary-600': 'var(--color-secondary-600)',
+        'secondary-700': 'var(--color-secondary-700)',
+        'secondary-foreground': 'var(--color-secondary-foreground)',
 
         // Accent Colors
-        'accent': '#10B981', // emerald-500
-        'accent-50': '#ECFDF5', // emerald-50
-        'accent-100': '#D1FAE5', // emerald-100
-        'accent-500': '#10B981', // emerald-500
-        'accent-600': '#059669', // emerald-600
-        'accent-foreground': '#FFFFFF', // white
+        'accent': 'var(--color-accent)',
+        'accent-50': 'var(--color-accent-50)',
+        'accent-100': 'var(--color-accent-100)',
+        'accent-500': 'var(--color-accent-500)',
+        'accent-600': 'var(--color-accent-600)',
+        'accent-700': 'var(--color-accent-700)',
+        'accent-foreground': 'var(--color-accent-foreground)',
 
         // Background Colors
-        'background': '#FAFBFC', // custom off-white
-        'surface': '#FFFFFF', // white
-        'card': '#FFFFFF', // white
-        'popover': '#FFFFFF', // white
+        'background': 'var(--color-background)',
+        'surface': 'var(--color-surface)',
+        'card': 'var(--color-card)',
+        'popover': 'var(--color-popover)',
 
         // Text Colors
-        'text-primary': '#1E293B', // slate-800
-        'text-secondary': '#64748B', // slate-500
-        'text-muted': '#94A3B8', // slate-400
-        'text-foreground': '#1E293B', // slate-800
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
+        'text-muted': 'var(--color-text-muted)',
+        'text-foreground': 'var(--color-text-foreground)',
 
         // Status Colors
-        'success': '#059669', // emerald-600
-        'success-50': '#ECFDF5', // emerald-50
-        'success-100': '#D1FAE5', // emerald-100
-        'success-500': '#10B981', // emerald-500
-        'success-foreground': '#FFFFFF', // white
+        'success': 'var(--color-success)',
+        'success-50': 'var(--color-success-50)',
+        'success-100': 'var(--color-success-100)',
+        'success-500': 'var(--color-success-500)',
+        'success-600': 'var(--color-success-600)',
+        'success-700': 'var(--color-success-700)',
+        'success-foreground': 'var(--color-success-foreground)',
 
-        'warning': '#D97706', // amber-600
-        'warning-50': '#FFFBEB', // amber-50
-        'warning-100': '#FEF3C7', // amber-100
-        'warning-500': '#F59E0B', // amber-500
-        'warning-foreground': '#FFFFFF', // white
+        'warning': 'var(--color-warning)',
+        'warning-50': 'var(--color-warning-50)',
+        'warning-100': 'var(--color-warning-100)',
+        'warning-500': 'var(--color-warning-500)',
+        'warning-600': 'var(--color-warning-600)',
+        'warning-700': 'var(--color-warning-700)',
+        'warning-foreground': 'var(--color-warning-foreground)',
 
-        'error': '#DC2626', // red-600
-        'error-50': '#FEF2F2', // red-50
-        'error-100': '#FEE2E2', // red-100
-        'error-500': '#EF4444', // red-500
-        'error-foreground': '#FFFFFF', // white
+        'error': 'var(--color-error)',
+        'error-50': 'var(--color-error-50)',
+        'error-100': 'var(--color-error-100)',
+        'error-500': 'var(--color-error-500)',
+        'error-600': 'var(--color-error-600)',
+        'error-700': 'var(--color-error-700)',
+        'error-foreground': 'var(--color-error-foreground)',
 
         // Border Colors
-        'border': '#E2E8F0', // slate-200
-        'border-light': '#F1F5F9', // slate-100
-        'border-muted': '#CBD5E1', // slate-300
+        'border': 'var(--color-border)',
+        'border-light': 'var(--color-border-light)',
+        'border-muted': 'var(--color-border-muted)',
       },
       fontFamily: {
         'heading': ['Inter', 'system-ui', 'sans-serif'],

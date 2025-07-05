@@ -55,7 +55,7 @@ const QuickActions = () => {
     <div className="bg-surface rounded-xl p-6 shadow-md border border-border">
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
-          <Icon name="Zap" size={20} color="var(--color-primary)" />
+          <Icon name="Zap" size={20} className="icon-contrast" />
         </div>
         <h3 className="text-lg font-semibold text-text-primary">Quick Actions</h3>
       </div>
@@ -65,23 +65,24 @@ const QuickActions = () => {
           <button
             key={action.id}
             onClick={() => navigate(action.path)}
-            className={`p-4 rounded-lg border-2 transition-all duration-200 text-left group ${getColorClasses(action.color)}`}
+            className={`p-4 rounded-lg border-2 transition-all duration-200 text-left group ${getColorClasses(action.color)} text-on-colored`}
           >
             <div className="flex items-center space-x-3 mb-2">
               <Icon 
                 name={action.icon} 
                 size={20} 
                 color="currentColor"
+                className="icon-on-colored"
               />
-              <h4 className="font-semibold">{action.title}</h4>
+              <h4 className="font-semibold text-on-colored">{action.title}</h4>
             </div>
-            <p className="text-sm opacity-80">{action.description}</p>
+            <p className="text-sm opacity-80 text-on-colored">{action.description}</p>
             <div className="flex items-center justify-end mt-3">
               <Icon 
                 name="ArrowRight" 
                 size={16} 
                 color="currentColor"
-                className="group-hover:translate-x-1 transition-transform duration-200"
+                className="group-hover:translate-x-1 transition-transform duration-200 icon-on-colored"
               />
             </div>
           </button>

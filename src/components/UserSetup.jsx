@@ -8,7 +8,8 @@ const UserSetup = ({ onComplete }) => {
   const { user, actions } = useUser();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: user.name || '',
+    firstName: user.firstName || '',
+    lastName: user.lastName || '',
     email: user.email || '',
     studyGoal: user.preferences?.studyGoal || 5,
     targetGpa: 3.8,
@@ -22,24 +23,26 @@ const UserSetup = ({ onComplete }) => {
     }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      // Save user data
-      actions.updateUser({
-        name: formData.name,
+      // Combine first and last name
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      
+      // Save user data to backend and context
+      await actions.savePersonalization({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        name: fullName,
         email: formData.email,
-        preferences: {
-          studyGoal: formData.studyGoal,
-          notifications: formData.notifications,
-          theme: 'light'
-        }
+        studyGoal: formData.studyGoal,
+        targetGpa: formData.targetGpa,
+        notifications: formData.notifications,
+        theme: 'light',
       });
-      
-      // Update GPA target
+      // Optionally update GPA target in context (if needed elsewhere)
       actions.updateGPA({ target: formData.targetGpa });
-      
       onComplete();
     }
   };
@@ -53,7 +56,7 @@ const UserSetup = ({ onComplete }) => {
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.name.trim().length > 0;
+        return formData.firstName.trim().length > 0 && formData.lastName.trim().length > 0;
       case 2:
         return formData.studyGoal > 0 && formData.studyGoal <= 24;
       case 3:
@@ -79,13 +82,22 @@ const UserSetup = ({ onComplete }) => {
             </p>
             
             <div className="space-y-4 max-w-md mx-auto">
-              <Input
-                label="Full Name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Enter your full name"
-                required
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="First Name"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  placeholder="Enter your first name"
+                  required
+                />
+                <Input
+                  label="Last Name"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  placeholder="Enter your last name"
+                  required
+                />
+              </div>
               <Input
                 label="Email (Optional)"
                 type="email"
@@ -215,6 +227,13 @@ const UserSetup = ({ onComplete }) => {
           >
             {step === 3 ? 'Get Started' : 'Next'}
           </Button>
+        </div>
+
+        {/* Note about editing preferences later */}
+        <div className="mt-6 text-center">
+          <p className="text-xs text-text-secondary">
+            💡 Don't worry! You can always edit these preferences later in your profile settings.
+          </p>
         </div>
       </div>
     </div>

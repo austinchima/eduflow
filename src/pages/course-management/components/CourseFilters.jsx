@@ -1,28 +1,19 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
-import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
+import { generateFilterSemesterList } from '../../../utils/semesterUtils';
 
 const CourseFilters = ({ 
   searchTerm, 
-  onSearchChange, 
+  setSearchTerm, 
   selectedSemester, 
-  onSemesterChange, 
+  setSelectedSemester, 
   selectedStatus, 
-  onStatusChange,
+  setSelectedStatus,
   sortBy,
-  onSortChange,
-  onClearFilters 
+  setSortBy,
+  semesters
 }) => {
-  const semesters = [
-    'All Semesters',
-    'Fall 2024',
-    'Spring 2024',
-    'Summer 2024',
-    'Fall 2023',
-    'Spring 2023'
-  ];
-
   const statuses = [
     { value: 'all', label: 'All Courses' },
     { value: 'active', label: 'Active' },
@@ -40,6 +31,13 @@ const CourseFilters = ({
 
   const hasActiveFilters = searchTerm || selectedSemester !== 'All Semesters' || selectedStatus !== 'all' || sortBy !== 'name';
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setSelectedSemester('All Semesters');
+    setSelectedStatus('all');
+    setSortBy('name');
+  };
+
   return (
     <div className="bg-surface border border-border rounded-lg p-4 mb-6">
       <div className="flex items-center justify-between mb-4">
@@ -47,7 +45,7 @@ const CourseFilters = ({
         {hasActiveFilters && (
           <Button
             variant="ghost"
-            onClick={onClearFilters}
+            onClick={handleClearFilters}
             iconName="X"
             iconSize={16}
             className="text-text-secondary hover:text-text-primary"
@@ -65,12 +63,14 @@ const CourseFilters = ({
             size={16} 
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted" 
           />
-          <Input
+          <input
             type="search"
             placeholder="Search courses..."
             value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10"
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+            className="flex h-10 w-full rounded-md border border-border bg-surface px-3 py-2 pl-10 text-base text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
           />
         </div>
 
@@ -78,7 +78,9 @@ const CourseFilters = ({
         <div>
           <select
             value={selectedSemester}
-            onChange={(e) => onSemesterChange(e.target.value)}
+            onChange={(e) => {
+              setSelectedSemester(e.target.value);
+            }}
             className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-surface"
           >
             {semesters.map(semester => (
@@ -91,7 +93,9 @@ const CourseFilters = ({
         <div>
           <select
             value={selectedStatus}
-            onChange={(e) => onStatusChange(e.target.value)}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+            }}
             className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-surface"
           >
             {statuses.map(status => (
@@ -104,7 +108,7 @@ const CourseFilters = ({
         <div>
           <select
             value={sortBy}
-            onChange={(e) => onSortChange(e.target.value)}
+            onChange={(e) => setSortBy(e.target.value)}
             className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-surface"
           >
             {sortOptions.map(option => (
@@ -122,7 +126,7 @@ const CourseFilters = ({
               <Icon name="Search" size={12} />
               <span>"{searchTerm}"</span>
               <button
-                onClick={() => onSearchChange('')}
+                onClick={() => setSearchTerm('')}
                 className="ml-1 hover:bg-primary-100 rounded-full p-0.5"
               >
                 <Icon name="X" size={12} />
@@ -135,7 +139,7 @@ const CourseFilters = ({
               <Icon name="Calendar" size={12} />
               <span>{selectedSemester}</span>
               <button
-                onClick={() => onSemesterChange('All Semesters')}
+                onClick={() => setSelectedSemester('All Semesters')}
                 className="ml-1 hover:bg-accent-100 rounded-full p-0.5"
               >
                 <Icon name="X" size={12} />
@@ -148,7 +152,7 @@ const CourseFilters = ({
               <Icon name="Filter" size={12} />
               <span>{statuses.find(s => s.value === selectedStatus)?.label}</span>
               <button
-                onClick={() => onStatusChange('all')}
+                onClick={() => setSelectedStatus('all')}
                 className="ml-1 hover:bg-secondary-200 rounded-full p-0.5"
               >
                 <Icon name="X" size={12} />
