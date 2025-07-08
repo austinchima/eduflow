@@ -197,6 +197,45 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For support or questions, please open an issue in the repository or contact the development team.
 
+## Production Deployment
+
+### Frontend (React) on Netlify
+
+1. **Build Command:**
+   - For Vite: `npm run build` or `vite build`
+   - For Create React App: `npm run build`
+2. **Publish Directory:**
+   - For Vite: `dist`
+   - For Create React App: `build`
+3. **Environment Variables:**
+   - Set `VITE_API_URL` to your Render backend URL (e.g., `https://your-backend.onrender.com`)
+4. **Deploy:**
+   - Connect your repo to Netlify and follow the prompts.
+
+### Backend (Node.js/Express) on Render
+
+1. **Create a new Web Service** on Render, pointing to the `server/` directory.
+2. **Build Command:** `npm install`
+3. **Start Command:** `node index.js` (or `npm start` if you have a start script)
+4. **Environment Variables:**
+   - `FRONTEND_URL`: Set to your Netlify site URL (e.g., `https://your-site.netlify.app`)
+   - Any other secrets (DB URLs, API keys, etc.)
+5. **CORS:**
+   - The backend is configured to only allow requests from `FRONTEND_URL`.
+
+### Frontend API Usage
+
+- In your frontend code, use the API URL from the environment variable:
+
+  ```js
+  const apiUrl = import.meta.env.VITE_API_URL;
+  ```
+
+### Notes
+
+- Make sure to set all environment variables in the respective platform dashboards (Netlify and Render).
+- For local development, you can use `.env` files in both `server/` and `src/` as needed.
+
 ---
 
 **EduFlow** - Empowering your academic journey with AI-driven personalization and cloud-powered collaboration.

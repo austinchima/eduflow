@@ -17,7 +17,7 @@ export default defineConfig({
       port: "4028",
       host: "0.0.0.0",
       strictPort: true,
-      allowedHosts: ['.amazonaws.com'],
+      // allowedHosts: ['localhost'],
       proxy: {
         '/api': {
           target: 'http://localhost:4000',

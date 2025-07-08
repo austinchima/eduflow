@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('@dotenvx/dotenvx').config();
+require('dotenv').config();
 const userProfile = require('./models/User');
 const helmet = require('helmet');
 const compression = require('compression');
@@ -9,27 +10,22 @@ const compression = require('compression');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Ensure NODE_ENV is set, default to 'production' if not set
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
+console.log(`Running in ${process.env.NODE_ENV} mode`);
+
+app.use(helmet());
+
+// Configure CORS for production
+const allowedOrigin = process.env.FRONTEND_URL || '*'; // Set FRONTEND_URL in Render to your Netlify site URL
+app.use(cors({
+  origin: allowedOrigin,
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(compression());
-
-// Add strong Content Security Policy (CSP) header
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"], // Remove 'unsafe-inline' if possible
-      imgSrc: ["'self'", "data:"],
-      fontSrc: ["'self'"],
-      connectSrc: ["'self'", "http://localhost:4000"],
-      objectSrc: ["'none'"],
-      baseUri: ["'self'"],
-      formAction: ["'self'"],
-      frameAncestors: ["'none'"]
-    }
-  })
-);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
