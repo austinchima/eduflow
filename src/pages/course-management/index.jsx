@@ -252,7 +252,7 @@ const CourseManagement = () => {
           <MobileNavigation />
           <StudySessionControls />
           <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8">
-            <div className="w-full max-w-4xl mx-auto">
+            <div className="w-full max-w-7xl xl:max-w-screen-xl mx-auto px-2 sm:px-4 lg:px-8">
               <Breadcrumb />
               
               {/* Header */}

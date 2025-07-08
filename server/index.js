@@ -20,7 +20,17 @@ app.use(helmet());
 // Configure CORS for production
 const allowedOrigin = process.env.FRONTEND_URL || '*'; // Set FRONTEND_URL in Render to your Netlify site URL
 app.use(cors({
-  origin: allowedOrigin,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if the origin is allowed
+    if (allowedOrigin === '*' || origin === allowedOrigin || origin === allowedOrigin.replace(/\/$/, '')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
