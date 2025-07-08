@@ -29,39 +29,45 @@ const StudyTimeChart = ({ data, timeRange }) => {
       </div>
 
       <div className="h-64 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-            <XAxis 
-              dataKey="period" 
-              stroke="var(--color-text-muted)"
-              fontSize={12}
-              tickFormatter={formatXAxisLabel}
-            />
-            <YAxis 
-              stroke="var(--color-text-muted)"
-              fontSize={12}
-              label={{ value: 'Hours', angle: -90, position: 'insideLeft' }}
-            />
-            <Tooltip 
-              formatter={formatTooltip}
-              labelStyle={{ color: 'var(--color-text-primary)' }}
-              contentStyle={{ 
-                backgroundColor: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '8px'
-              }}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="hours" 
-              stroke="var(--color-primary)" 
-              strokeWidth={3}
-              dot={{ fill: 'var(--color-primary)', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6, stroke: 'var(--color-primary)', strokeWidth: 2 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        {Array.isArray(data) && data.length > 0 && data.some(d => d.hours > 0) ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis 
+                dataKey="period" 
+                stroke="var(--color-text-muted)"
+                fontSize={12}
+                tickFormatter={formatXAxisLabel}
+              />
+              <YAxis 
+                stroke="var(--color-text-muted)"
+                fontSize={12}
+                label={{ value: 'Hours', angle: -90, position: 'insideLeft' }}
+              />
+              <Tooltip 
+                formatter={formatTooltip}
+                labelStyle={{ color: 'var(--color-text-primary)' }}
+                contentStyle={{ 
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '8px'
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="hours" 
+                stroke="var(--color-primary)" 
+                strokeWidth={3}
+                dot={{ fill: 'var(--color-primary)', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: 'var(--color-primary)', strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full text-text-muted text-lg">
+            No study time data available.
+          </div>
+        )}
       </div>
     </div>
   );

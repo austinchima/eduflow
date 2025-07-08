@@ -122,11 +122,8 @@ const ProfileSettings = () => {
       <Sidebar isCollapsed={sidebarCollapsed} onCollapseChange={setSidebarCollapsed} />
       <StudySessionControls />
       <MobileNavigation />
-      <main
-        className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-60'} px-4 lg:px-8`}
-        style={{ minHeight: '100vh' }}
-      >
-        <div className="max-w-4xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8">
+        <div className="w-full max-w-2xl mx-auto">
           <div className="p-4 lg:p-8">
             <Breadcrumb />
             

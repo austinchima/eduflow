@@ -44,5 +44,16 @@ export const dataService = {
       console.error('Error saving user data:', error)
       throw error
     }
+  },
+
+  // Fetch all courses for the authenticated user
+  async getUserCourses() {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Not authenticated');
+    const res = await fetch(`${API_URL}/courses/user`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch courses');
+    return res.json();
   }
 }

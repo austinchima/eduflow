@@ -8,8 +8,6 @@ const StudyPreferencesSection = () => {
   const { user, actions } = useUser();
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [modelList, setModelList] = useState([]);
-  const [modelsLoading, setModelsLoading] = useState(true);
   const [preferences, setPreferences] = useState({
     defaultQuizDifficulty: 'medium',
     flashcardReviewInterval: 'daily',
@@ -38,22 +36,6 @@ const StudyPreferencesSection = () => {
       });
     }
   }, [user]);
-
-  useEffect(() => {
-    // Use a static list of AI models
-    setModelsLoading(true);
-    setTimeout(() => {
-      setModelList([
-        { id: 'deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free', name: 'DeepSeek R1 Distill Llama 70B (Free)' },
-        { id: 'mistralai/Mistral-7B-Instruct-v0.2', name: 'Mistral 7B Instruct v0.2' },
-        { id: 'meta-llama/Meta-Llama-3.1-70B', name: 'Llama 3.1 70B' },
-        { id: 'meta-llama/Llama-2-13b-chat-hf', name: 'Llama 2 13B Chat' },
-        { id: 'meta-llama/Llama-2-70b-chat-hf', name: 'Llama 2 70B Chat' },
-        { id: 'mistralai/Mixtral-8x7B-Instruct-v0.1', name: 'Mixtral 8x7B Instruct' }
-      ]);
-      setModelsLoading(false);
-    }, 300);
-  }, []);
 
   const handlePreferenceChange = (key, value) => {
     setPreferences(prev => ({ ...prev, [key]: value }));
@@ -233,21 +215,7 @@ const StudyPreferencesSection = () => {
               <label className="block text-sm font-medium text-text-primary mb-2">
                 Default AI Model
               </label>
-              {modelsLoading ? (
-                <div className="text-text-secondary text-sm">Loading models...</div>
-              ) : (
-                <select
-                  value={preferences.defaultAiModel}
-                  onChange={e => handlePreferenceChange('defaultAiModel', e.target.value)}
-                  className="w-full h-10 px-3 py-2 border border-input bg-background rounded-md text-sm focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
-                >
-                  <option value="">System Default (Recommended)</option>
-                  {modelList.map(model => (
-                    <option key={model.id} value={model.id}>{model.name}</option>
-                  ))}
-                </select>
-              )}
-              <p className="text-xs text-text-secondary mt-1">Choose your preferred AI model for content generation. System default is fastest and most reliable.</p>
+              <p className="text-xs text-text-secondary mt-1">Using 'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B' for all AI features</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-text-primary mb-2">

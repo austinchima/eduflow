@@ -10,7 +10,21 @@ const courseSchema = new mongoose.Schema({
   color: String,
   grade: Number,
   isActive: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  modules: [
+    {
+      title: String,
+      lessons: [
+        {
+          title: String,
+          summary: String,
+          keyPoints: [String],
+          example: String,
+          task: String
+        }
+      ]
+    }
+  ]
 });
 
 module.exports = mongoose.model('Course', courseSchema);

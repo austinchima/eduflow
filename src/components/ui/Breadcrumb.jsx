@@ -65,26 +65,26 @@ const Breadcrumb = ({ customBreadcrumbs = null }) => {
   };
 
   return (
-    <nav className="flex items-center space-x-2 text-sm text-text-secondary mb-6" aria-label="Breadcrumb">
-      <ol className="flex items-center space-x-2">
+    <nav className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-text-secondary mb-4 sm:mb-6 overflow-x-auto" aria-label="Breadcrumb">
+      <ol className="flex items-center space-x-1 sm:space-x-2 min-w-0">
         {breadcrumbs.map((crumb, index) => (
-          <li key={crumb.path} className="flex items-center">
+          <li key={crumb.path} className="flex items-center flex-shrink-0">
             {index > 0 && (
               <Icon 
                 name="ChevronRight" 
-                size={16} 
-                className="mx-2 text-text-muted" 
+                size={12}
+                className="mx-1 sm:mx-2 text-text-muted flex-shrink-0" 
               />
             )}
             
             {crumb.isLast ? (
-              <span className="text-text-primary font-medium">
+              <span className="text-text-primary font-medium truncate">
                 {crumb.label}
               </span>
             ) : (
               <button
                 onClick={() => handleNavigation(crumb.path)}
-                className="hover:text-text-primary transition-colors duration-200 focus:outline-none focus:text-text-primary"
+                className="hover:text-text-primary transition-colors duration-200 focus:outline-none focus:text-text-primary truncate min-w-0"
               >
                 {crumb.label}
               </button>

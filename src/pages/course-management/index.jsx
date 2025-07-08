@@ -15,6 +15,7 @@ import { generateCourseContent } from '../../services/aiService';
 import StudyCourseContent from './components/StudyCourseContent';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import StudyCoursePage from './components/StudyCoursePage';
+import { toast } from 'react-hot-toast';
 
 const CourseManagement = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -176,9 +177,12 @@ const CourseManagement = () => {
 
   const handleExportContent = (course) => {
     if (!course?.content) return;
-    const text = course.content.map(section => (
-      `${section.title}\n\n${section.explanation}\n\nKey Points:\n- ${section.keyPoints.join('\n- ')}\n\n`
-    )).join('\n');
+    const text = course.content.map(section => {
+      const keyPointsText = section.keyPoints.map(point => 
+        typeof point === 'object' && point.point ? point.point : point
+      ).join('\n- ');
+      return `${section.title}\n\n${section.explanation}\n\nKey Points:\n- ${keyPointsText}\n\n`;
+    }).join('\n');
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -207,7 +211,8 @@ const CourseManagement = () => {
       y += 7;
       section.keyPoints.forEach(point => {
         doc.setFontSize(11);
-        doc.text(`- ${point}`, 14, y);
+        const pointText = typeof point === 'object' && point.point ? point.point : point;
+        doc.text(`- ${pointText}`, 14, y);
         y += 6;
       });
       y += 4;
@@ -232,6 +237,12 @@ const CourseManagement = () => {
     setCourseToArchive(null);
   };
 
+  const handleUploadMaterials = (course, materials) => {
+    // Update the course's material count or refresh materials as needed
+    actions.refreshCourseMaterials(course.id);
+    toast.success(`Materials added to ${course.name}!`);
+  };
+
   return (
     <Routes>
       <Route path="/course/:id/study" element={<StudyCoursePage />} />
@@ -240,11 +251,8 @@ const CourseManagement = () => {
           <Sidebar isCollapsed={sidebarCollapsed} onCollapseChange={setSidebarCollapsed} />
           <MobileNavigation />
           <StudySessionControls />
-          <main
-            className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-60'} px-4 lg:px-8`}
-            style={{ minHeight: '100vh' }}
-          >
-            <div className="max-w-7xl mx-auto">
+          <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8">
+            <div className="w-full max-w-4xl mx-auto">
               <Breadcrumb />
               
               {/* Header */}
@@ -296,6 +304,8 @@ const CourseManagement = () => {
                 setSelectedStatus={setSelectedStatus}
                 sortBy={sortBy}
                 setSortBy={setSortBy}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
                 semesters={getUniqueSemesters()}
               />
               {/* Always-visible course material card list */}
@@ -331,18 +341,22 @@ const CourseManagement = () => {
                   {/* Courses Grid/List */}
                   {filteredAndSortedCourses.length > 0 ? (
                     <div className={`
-                      ${viewMode === 'grid' ?'grid grid-cols-1 md:grid-cols-2 gap-6' :'space-y-4'
+                      ${viewMode === 'grid' 
+                        ? 'grid grid-cols-1 md:grid-cols-2 gap-6' 
+                        : 'space-y-4'
                       }
                     `}>
                       {filteredAndSortedCourses.map(course => (
                         <CourseCard
                           key={`card-${course.id}`}
                           course={course}
+                          viewMode={viewMode}
                           onEdit={handleEditCourse}
                           onArchive={handleArchiveCourse}
                           onViewMaterials={handleViewMaterials}
                           onStudy={handleStudyCourse}
                           onDelete={handleDeleteCourse}
+                          onUpload={handleUploadMaterials}
                         />
                       ))}
                     </div>

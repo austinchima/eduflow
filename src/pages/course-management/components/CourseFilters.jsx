@@ -12,6 +12,8 @@ const CourseFilters = ({
   setSelectedStatus,
   sortBy,
   setSortBy,
+  viewMode,
+  setViewMode,
   semesters
 }) => {
   const statuses = [
@@ -55,7 +57,7 @@ const CourseFilters = ({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Search */}
         <div className="relative">
           <Icon 
@@ -115,6 +117,24 @@ const CourseFilters = ({
               <option key={option.value} value={option.value}>Sort by {option.label}</option>
             ))}
           </select>
+        </div>
+
+        {/* View Mode Toggle */}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant={viewMode === 'grid' ? 'primary' : 'outline'}
+            onClick={() => setViewMode('grid')}
+            iconName="Grid"
+            iconSize={16}
+            className="flex-1"
+          />
+          <Button
+            variant={viewMode === 'list' ? 'primary' : 'outline'}
+            onClick={() => setViewMode('list')}
+            iconName="List"
+            iconSize={16}
+            className="flex-1"
+          />
         </div>
       </div>
 

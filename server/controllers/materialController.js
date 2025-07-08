@@ -4,6 +4,10 @@ const {
   uploadFileToGCS, 
   deleteFileFromGCS 
 } = require('../utils/gcsUpload');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
+const csvParser = require('csv-parser');
+const fs = require('fs');
 
 // Helper to get GridFSBucket
 function getGridFSBucket() {
@@ -27,6 +31,71 @@ exports.uploadMaterial = async (req, res) => {
     
     // Upload to GCS with enhanced metadata
     const uploadResult = await uploadFileToGCS(req.file, userId, courseId);
+    
+    // Extract text content from file
+    let extractedText = '';
+    const filePath = req.file.path;
+    const mimetype = req.file.mimetype;
+    try {
+      if (mimetype === 'application/pdf') {
+        const dataBuffer = fs.readFileSync(filePath);
+        const pdfData = await pdfParse(dataBuffer);
+        extractedText = pdfData.text;
+        console.log(`Extracted ${extractedText.length} characters from PDF`);
+      } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        const dataBuffer = fs.readFileSync(filePath);
+        const result = await mammoth.extractRawText({ buffer: dataBuffer });
+        extractedText = result.value;
+        console.log(`Extracted ${extractedText.length} characters from Word document`);
+      } else if (mimetype === 'text/csv') {
+        // Handle CSV files
+        const results = [];
+        extractedText = await new Promise((resolve, reject) => {
+          fs.createReadStream(filePath)
+            .pipe(csvParser())
+            .on('data', (data) => results.push(data))
+            .on('end', () => {
+              // Convert CSV data to text format
+              const csvText = results.map(row => Object.values(row).join(', ')).join('\n');
+              resolve(csvText);
+            })
+            .on('error', reject);
+        });
+        console.log(`Extracted ${extractedText.length} characters from CSV file`);
+      } else if (mimetype.startsWith('text/') || mimetype === 'text/html' || mimetype === 'text/markdown' || mimetype === 'text/x-markdown') {
+        // Handle plain text files, HTML, and markdown files
+        extractedText = fs.readFileSync(filePath, 'utf8');
+        
+        // For markdown files, we can optionally strip markdown formatting
+        if (mimetype === 'text/markdown' || mimetype === 'text/x-markdown' || req.file.originalname.toLowerCase().endsWith('.md')) {
+          // Basic markdown stripping - remove headers, bold, italic, links, etc.
+          extractedText = extractedText
+            .replace(/^#{1,6}\s+/gm, '') // Remove headers
+            .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+            .replace(/\*(.*?)\*/g, '$1') // Remove italic
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+            .replace(/`([^`]+)`/g, '$1') // Remove inline code
+            .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+            .replace(/^\s*[-*+]\s+/gm, '') // Remove list markers
+            .replace(/^\s*\d+\.\s+/gm, '') // Remove numbered list markers
+            .replace(/\n\s*\n/g, '\n\n') // Clean up multiple newlines
+            .trim();
+        }
+        
+        console.log(`Extracted ${extractedText.length} characters from ${mimetype} file`);
+      } else if (mimetype === 'application/msword' || mimetype === 'application/rtf') {
+        // For older Word documents and RTF files, we'll skip text extraction for now
+        // as they require additional libraries that might have security issues
+        extractedText = '';
+        console.log(`Text extraction not supported for ${mimetype} files`);
+      } else {
+        extractedText = '';
+        console.log(`No text extraction implemented for ${mimetype} files`);
+      }
+    } catch (extractErr) {
+      console.error('Text extraction error:', extractErr);
+      extractedText = '';
+    }
     
     // Note: IAM permissions are not needed for signed URL access
     // Files are stored privately and accessed via signed URLs
@@ -56,7 +125,8 @@ exports.uploadMaterial = async (req, res) => {
       
       // Access control
       isPublic: false,
-      allowedUsers: [userId]
+      allowedUsers: [userId],
+      text: extractedText
     });
     
     await material.save();
@@ -77,7 +147,8 @@ exports.uploadMaterial = async (req, res) => {
         category: material.category,
         tags: material.tags,
         downloadCount: material.downloadCount,
-        signedUrl: material.signedUrl
+        signedUrl: material.signedUrl,
+        text: material.text
       }
     });
     

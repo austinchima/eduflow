@@ -22,14 +22,14 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
     {
       label: 'Dashboard',
       path: '/dashboard',
-      icon: 'LayoutDashboard',
-      tooltip: 'Academic overview and quick actions'
+      icon: 'Home',
+      tooltip: 'Overview and quick actions'
     },
     {
       label: 'Course Management',
       path: '/course-management',
       icon: 'BookOpen',
-      tooltip: 'Organize and manage your courses'
+      tooltip: 'Manage your courses and materials'
     },
     {
       label: 'Study Tools Hub',
@@ -69,13 +69,14 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
       setIsMobile(mobile);
       if (mobile) {
         setIsCollapsed(true);
+        if (onCollapseChange) onCollapseChange(true);
       }
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [onCollapseChange]);
 
   useEffect(() => {
     const studyPaths = ['/quiz-interface', '/flashcard-study-session'];
@@ -90,6 +91,7 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
     navigate(path);
     if (isMobile) {
       setIsCollapsed(true);
+      if (onCollapseChange) onCollapseChange(true);
     }
   };
 
@@ -116,7 +118,10 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
       {isMobile && !isCollapsed && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-150 lg:hidden"
-          onClick={() => setIsCollapsed(true)}
+          onClick={() => {
+            setIsCollapsed(true);
+            if (onCollapseChange) onCollapseChange(true);
+          }}
         />
       )}
 
@@ -198,44 +203,31 @@ const Sidebar = ({ isCollapsed: controlledCollapsed, onCollapseChange }) => {
         <div className="p-4 border-t border-border">
           {/* Theme Toggle Button */}
           {isAuthenticated && (
-            <div className="mb-3">
+            <div className="mb-4">
               <button
                 onClick={handleThemeToggle}
                 className={`
-                  w-full flex items-center justify-center space-x-3 px-3 py-2.5 rounded-lg
-                  transition-all duration-200 ease-smooth group relative
+                  w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg
+                  transition-all duration-200 ease-smooth
                   text-text-secondary hover:text-text-primary hover:bg-secondary-50
-                  ${isCollapsed ? 'justify-center' : 'justify-start'}
                 `}
-                title={isCollapsed ? `Switch to ${isDark ? 'light' : 'dark'} mode` : ''}
+                title={isCollapsed ? 'Toggle theme' : ''}
               >
                 <Icon 
                   name={isDark ? 'Sun' : 'Moon'} 
-                  size={isCollapsed ? 20 : 18} 
+                  size={isCollapsed ? 28 : 20} 
                   className={isCollapsed ? 'mx-auto' : ''}
                 />
-                
                 {!isCollapsed && !isStudyMode && (
                   <span className="font-medium text-sm">
                     {isDark ? 'Light Mode' : 'Dark Mode'}
                   </span>
                 )}
-
-                {/* Tooltip for collapsed state */}
-                {(isCollapsed || isStudyMode) && (
-                  <div className="
-                    absolute left-full ml-2 px-2 py-1 bg-text-primary text-white text-xs
-                    rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200
-                    pointer-events-none whitespace-nowrap z-200
-                  ">
-                    {isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                  </div>
-                )}
               </button>
             </div>
           )}
 
-          {/* Existing Footer Content */}
+          {/* User Info */}
           {!isCollapsed && !isStudyMode && (
             <div className="flex items-center space-x-3 text-text-muted">
               <Icon name="User" size={16} />

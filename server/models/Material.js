@@ -35,6 +35,9 @@ const MaterialSchema = new mongoose.Schema({
   downloadCount: { type: Number, default: 0 },
   lastAccessed: { type: Date },
   
+  // Extracted text content
+  text: { type: String },
+  
   // Status
   status: { type: String, enum: ['active', 'archived', 'deleted'], default: 'active' },
   

@@ -13,6 +13,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "framer-motion": "^10.16.4",
+    "jspdf": "^3.0.1",
     "lucide-react": "^0.525.0",
     "multer": "^2.0.1",
     "node-fetch": "^2.6.7",
@@ -21,12 +22,16 @@
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.55.0",
+    "react-hot-toast": "^2.5.2",
+    "react-markdown": "^10.1.0",
     "react-minimal-pie-chart": "^9.1.1",
     "react-router-dom": "6.0.2",
     "react-router-hash-link": "^2.4.3",
+    "react-syntax-highlighter": "^15.6.1",
     "react-toastify": "^11.0.5",
     "recharts": "^2.15.2",
     "redux": "^5.0.1",
+    "remark-gfm": "^4.0.1",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-elevation": "^2.0.0",
     "tailwindcss-fluid-type": "^2.0.7"
@@ -65,8 +70,9 @@
     "autoprefixer": "10.4.2",
     "concurrently": "^9.2.0",
     "postcss": "^8.5.6",
+    "rollup-plugin-visualizer": "^6.0.3",
     "tailwindcss": "3.4.6",
-    "vite": "^5.4.19",
+    "vite": "^6.0.0",
     "vite-tsconfig-paths": "3.6.0"
   }
 }

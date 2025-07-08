@@ -24,7 +24,7 @@ const GpaCard = ({ currentGpa, targetGpa, semester }) => {
         </div>
         <div className="text-right">
           <div className={`text-3xl font-bold ${getGpaColor(currentGpa)}`}>
-            {currentGpa.toFixed(2)}
+            {currentGpa.toFixed(1)}
           </div>
           <div className="text-sm text-text-muted">/ 4.00</div>
         </div>
@@ -34,7 +34,7 @@ const GpaCard = ({ currentGpa, targetGpa, semester }) => {
         <div className="flex justify-between items-center">
           <span className="text-sm text-text-secondary">Progress to Target</span>
           <span className="text-sm font-medium text-text-primary">
-            Target: {targetGpa.toFixed(2)}
+            Target: {targetGpa.toFixed(1)}
           </span>
         </div>
         

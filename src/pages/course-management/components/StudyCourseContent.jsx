@@ -23,7 +23,16 @@ const StudyCourseContent = ({ course, isLoading, error }) => {
           <div className="mb-2 text-text-secondary whitespace-pre-line">{section.explanation}</div>
           <ul className="list-disc pl-6 text-text-primary">
             {section.keyPoints.map((point, i) => (
-              <li key={i}>{point}</li>
+              <li key={i}>
+                {typeof point === 'object' && point.point ? (
+                  <div>
+                    <strong>{point.point}</strong>
+                    {point.explanation && <div className="text-sm text-text-secondary mt-1">{point.explanation}</div>}
+                  </div>
+                ) : (
+                  point
+                )}
+              </li>
             ))}
           </ul>
         </div>

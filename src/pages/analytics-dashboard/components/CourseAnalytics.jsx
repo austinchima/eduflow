@@ -60,7 +60,7 @@ const CourseAnalytics = ({ courses }) => {
               <div className="flex items-center justify-center w-12 h-12 bg-accent text-accent-foreground rounded-lg mb-2">
                 <Icon name="Clock" size={20} className="icon-on-colored" />
               </div>
-              <p className="font-bold text-lg text-text-primary">{selectedCourseData.studyHours}h</p>
+              <p className="font-bold text-lg text-text-primary">{Number(selectedCourseData.studyHours).toFixed(1)}h</p>
               <p className="text-sm font-medium text-text-secondary">Study Hours</p>
             </div>
             
@@ -68,7 +68,7 @@ const CourseAnalytics = ({ courses }) => {
               <div className="flex items-center justify-center w-12 h-12 bg-primary-50 text-primary rounded-lg mb-2">
                 <Icon name="CheckCircle" size={20} className="icon-on-colored" />
               </div>
-              <p className="font-bold text-lg text-text-primary">{selectedCourseData.completionRate}%</p>
+              <p className="font-bold text-lg text-text-primary">{Math.round(selectedCourseData.completionRate)}%</p>
               <p className="text-sm font-medium text-text-secondary">Completion</p>
             </div>
             
@@ -76,7 +76,7 @@ const CourseAnalytics = ({ courses }) => {
               <div className="flex items-center justify-center w-12 h-12 bg-warning-50 text-warning rounded-lg mb-2">
                 <Icon name="TrendingUp" size={20} className="icon-on-colored" />
               </div>
-              <p className="font-bold text-lg text-text-primary">+{selectedCourseData.improvement}%</p>
+              <p className="font-bold text-lg text-text-primary">+{Number(selectedCourseData.improvement).toFixed(1)}%</p>
               <p className="text-sm font-medium text-text-secondary">Improvement</p>
             </div>
           </div>
@@ -93,7 +93,7 @@ const CourseAnalytics = ({ courses }) => {
                     <p className="text-xs text-text-muted">{activity.date}</p>
                   </div>
                   <div className={`px-2 py-1 rounded text-xs font-medium ${getGradeColor(activity.score)}`}>
-                    {activity.score}%
+                    {Math.round(activity.score)}%
                   </div>
                 </div>
               ))}

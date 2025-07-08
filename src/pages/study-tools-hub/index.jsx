@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/ui/Sidebar';
 import MobileNavigation from '../../components/ui/MobileNavigation';
@@ -21,6 +21,18 @@ const StudyToolsHub = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [dismissedRecommendations, setDismissedRecommendations] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile device
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Defensive defaults for user data arrays
   const courses = Array.isArray(academic?.courses) ? academic.courses : [];
@@ -138,6 +150,25 @@ const StudyToolsHub = () => {
     }
   };
 
+  const handleAcceptRecommendation = (recommendation) => {
+    if (recommendation.type === 'quiz') {
+      // Try to find the quiz tool by title or id
+      const quizTool = studyTools.find(tool => tool.type === 'quiz' && tool.title === recommendation.title);
+      if (quizTool) {
+        navigate('/quiz-interface', { state: { quizId: quizTool.id.replace('quiz_', '') } });
+        return;
+      }
+    } else if (recommendation.type === 'flashcard') {
+      const deckTool = studyTools.find(tool => tool.type === 'flashcard' && tool.title === recommendation.title);
+      if (deckTool) {
+        navigate('/flashcard-study-session', { state: { deckId: deckTool.id.replace('flashcard_', '') } });
+        return;
+      }
+    }
+    // Mark as done (dismiss)
+    setDismissedRecommendations(prev => [...prev, recommendation.id]);
+  };
+
   // Defensive defaults
   const safeProgressData = progressData && typeof progressData === 'object' ? progressData : {
     totalTools: 0,
@@ -154,52 +185,35 @@ const StudyToolsHub = () => {
     sessions: studyTools.filter(t => t.type === 'session').length,
   };
 
-  // If no courses, show a friendly message
-  // if (courses.length === 0) {
-  //   return (
-  //     <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-  //       <Icon name="BookOpen" size={48} className="mb-4 text-muted-foreground" />
-  //       <h2 className="text-2xl font-bold mb-2">No Courses Found</h2>
-  //       <p className="text-text-secondary mb-6">Get started by adding your first course to unlock study tools and AI-powered learning.</p>
-  //       <a href="/course-management">
-  //         <button className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors">
-  //           Go to Course Management
-  //         </button>
-  //       </a>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar isCollapsed={sidebarCollapsed} onCollapseChange={setSidebarCollapsed} />
       <MobileNavigation />
-      <main
-        className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-60'} px-4 lg:px-8`}
+      <main className={`flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 ${isMobile ? 'ml-0' : sidebarCollapsed ? 'ml-16' : 'ml-60'}`}
         style={{ minHeight: '100vh' }}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full max-w-2xl mx-auto">
           <Breadcrumb />
 
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-text-primary mb-2">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
               Study Tools Hub
             </h1>
-            <p className="text-text-secondary">
+            <p className="text-sm sm:text-base text-text-secondary">
               Access all your study tools and create new learning resources
             </p>
           </div>
 
           {/* Progress Overview */}
           {safeProgressData && (
-            <div className="mb-8">
+            <div className="mb-6 sm:mb-8">
               <ProgressOverview progressData={safeProgressData} />
             </div>
           )}
 
           {/* Quick Create Section */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <QuickCreateSection
               courses={courses}
               onCreateTool={handleCreateTool}
@@ -208,14 +222,17 @@ const StudyToolsHub = () => {
 
           {/* AI Recommendations */}
           {aiRecommendations.length > 0 && (
-            <div className="mb-8">
-              <AIRecommendations recommendations={aiRecommendations} />
+            <div className="mb-6 sm:mb-8">
+              <AIRecommendations
+                recommendations={aiRecommendations.filter(r => !dismissedRecommendations.includes(r.id))}
+                onAcceptRecommendation={handleAcceptRecommendation}
+              />
             </div>
           )}
 
           {/* Tab Navigation */}
           {tabCounts && (
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <TabNavigation
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
@@ -225,7 +242,7 @@ const StudyToolsHub = () => {
           )}
 
           {/* Filters */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <FilterSection
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -241,7 +258,7 @@ const StudyToolsHub = () => {
 
           {/* Tools Grid */}
           {filteredTools.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredTools.map(tool => (
                 <ToolCard
                   key={tool.id}
@@ -251,14 +268,14 @@ const StudyToolsHub = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <div className="w-24 h-24 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
-                <Icon name="BookOpen" size={32} className="text-muted-foreground" />
+            <div className="text-center py-8 sm:py-12">
+              <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                <Icon name="BookOpen" size={24} className="sm:w-8 sm:h-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold text-text-primary mb-2">
+              <h3 className="text-base sm:text-lg font-semibold text-text-primary mb-2">
                 No study tools found
               </h3>
-              <p className="text-text-secondary mb-6">
+              <p className="text-sm sm:text-base text-text-secondary mb-4 sm:mb-6 px-4">
                 {searchQuery || selectedCourse || selectedDifficulty || selectedStatus
                   ? 'Try adjusting your filters to see more tools.'
                   : 'Create your first study tool to get started.'
@@ -267,7 +284,7 @@ const StudyToolsHub = () => {
               {!searchQuery && !selectedCourse && !selectedDifficulty && !selectedStatus && (
                 <button
                   onClick={() => setActiveTab('all')}
-                  className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors text-on-colored"
+                  className="bg-primary text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors text-on-colored text-sm sm:text-base"
                 >
                   Create Your First Tool
                 </button>

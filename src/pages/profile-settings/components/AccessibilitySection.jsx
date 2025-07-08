@@ -8,24 +8,18 @@ const AccessibilitySection = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [accessibilitySettings, setAccessibilitySettings] = useState({
-    highContrast: false,
     largeText: false,
     screenReader: false,
-    reducedMotion: false,
-    keyboardNavigation: true,
-    colorBlindSupport: false
+    reducedMotion: false
   });
 
   // Initialize accessibility settings when user data loads
   useEffect(() => {
     if (user?.accessibility) {
       setAccessibilitySettings({
-        highContrast: user.accessibility.highContrast ?? false,
         largeText: user.accessibility.largeText ?? false,
         screenReader: user.accessibility.screenReader ?? false,
-        reducedMotion: user.accessibility.reducedMotion ?? false,
-        keyboardNavigation: user.accessibility.keyboardNavigation ?? true,
-        colorBlindSupport: user.accessibility.colorBlindSupport ?? false
+        reducedMotion: user.accessibility.reducedMotion ?? false
       });
     }
   }, [user]);
@@ -53,13 +47,6 @@ const AccessibilitySection = () => {
   const applyAccessibilitySettings = (settings = accessibilitySettings) => {
     const html = document.documentElement;
     
-    // Apply high contrast
-    if (settings.highContrast) {
-      html.classList.add('high-contrast');
-    } else {
-      html.classList.remove('high-contrast');
-    }
-
     // Apply large text
     if (settings.largeText) {
       html.classList.add('large-text');
@@ -78,29 +65,14 @@ const AccessibilitySection = () => {
       html.style.removeProperty('--transition-duration');
     }
 
-    // Apply color blind support
-    if (settings.colorBlindSupport) {
-      html.classList.add('colorblind-support');
-    } else {
-      html.classList.remove('colorblind-support');
-    }
 
-    // Apply keyboard navigation
-    if (settings.keyboardNavigation) {
-      html.classList.add('keyboard-navigation');
-    } else {
-      html.classList.remove('keyboard-navigation');
-    }
   };
 
   const resetToDefaults = () => {
     const defaultSettings = {
-      highContrast: false,
       largeText: false,
       screenReader: false,
-      reducedMotion: false,
-      keyboardNavigation: true,
-      colorBlindSupport: false
+      reducedMotion: false
     };
     setAccessibilitySettings(defaultSettings);
     setHasChanges(true);
@@ -166,22 +138,6 @@ const AccessibilitySection = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="font-medium text-text-primary">High Contrast Mode</p>
-                <p className="text-sm text-text-secondary">Increase contrast for better readability</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={accessibilitySettings.highContrast}
-                  onChange={(e) => handleAccessibilityChange('highContrast', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-              </label>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
                 <p className="font-medium text-text-primary">Large Text</p>
                 <p className="text-sm text-text-secondary">Increase font size throughout the application</p>
               </div>
@@ -196,21 +152,6 @@ const AccessibilitySection = () => {
               </label>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="font-medium text-text-primary">Color Blind Support</p>
-                <p className="text-sm text-text-secondary">Use color-blind friendly color schemes</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={accessibilitySettings.colorBlindSupport}
-                  onChange={(e) => handleAccessibilityChange('colorBlindSupport', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-              </label>
-            </div>
           </div>
         </div>
 
@@ -237,21 +178,6 @@ const AccessibilitySection = () => {
               </label>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="font-medium text-text-primary">Keyboard Navigation</p>
-                <p className="text-sm text-text-secondary">Enable enhanced keyboard navigation support</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={accessibilitySettings.keyboardNavigation}
-                  onChange={(e) => handleAccessibilityChange('keyboardNavigation', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-              </label>
-            </div>
           </div>
         </div>
 
@@ -295,10 +221,6 @@ const AccessibilitySection = () => {
               <div className="flex justify-between">
                 <span className="text-text-secondary">Open Study Tools:</span>
                 <kbd className="px-2 py-1 bg-secondary-100 rounded text-xs">Ctrl + 2</kbd>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-text-secondary">Toggle High Contrast:</span>
-                <kbd className="px-2 py-1 bg-secondary-100 rounded text-xs">Ctrl + H</kbd>
               </div>
               <div className="flex justify-between">
                 <span className="text-text-secondary">Toggle Large Text:</span>

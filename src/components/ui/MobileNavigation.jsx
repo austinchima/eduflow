@@ -102,7 +102,7 @@ const MobileNavigation = () => {
         <Button
           variant="ghost"
           onClick={toggleMenu}
-          className="fixed top-4 left-4 z-200 lg:hidden bg-surface shadow-md"
+          className="fixed top-4 left-4 z-200 lg:hidden bg-surface shadow-md border border-border"
           iconName="Menu"
           iconSize={20}
         />
@@ -146,7 +146,7 @@ const MobileNavigation = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 p-4 overflow-y-auto">
           <ul className="space-y-1">
             {navigationItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -198,7 +198,7 @@ const MobileNavigation = () => {
           <div className="flex items-center space-x-3 text-text-muted">
             <Icon name="User" size={20} />
             <div className="text-sm">
-              <p className="font-medium text-text-primary">Student Portal</p>
+              <p className="font-medium">Student Portal</p>
               <p className="text-xs">Academic Year 2024</p>
             </div>
           </div>

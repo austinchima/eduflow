@@ -4,6 +4,9 @@ body {
   font-family: Inter;
   /* Prevent background flashing during theme transitions */
   transition: background-color 0.3s ease-in-out;
+  /* Improve mobile scrolling */
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
 }
 
 * {
@@ -18,6 +21,9 @@ html {
   /* Set a default background to prevent white flash */
   background-color: #FAFBFC;
   transition: background-color 0.3s ease-in-out;
+  /* Improve mobile scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* overflow-scrolling: touch; */
 }
 
 /* Dark mode background */
@@ -57,13 +63,48 @@ html {
   transform: translateY(-10px);
 }
 
-/* High Contrast Mode */
-.high-contrast {
-  --color-background: #000 !important;
-  --color-surface: #111 !important;
-  --color-text: #fff !important;
-  --color-primary: #ff0 !important;
-  --color-border: #fff !important;
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  /* Improve touch targets */
+  button, 
+  [role="button"], 
+  input[type="button"], 
+  input[type="submit"], 
+  input[type="reset"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve form elements */
+  input, 
+  select, 
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Better scrolling */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Improve text readability */
+  .text-sm {
+    line-height: 1.4;
+  }
+
+  /* Better spacing for mobile */
+  .space-y-3 > * + * {
+    margin-top: 0.75rem;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 1rem;
+  }
+
+  /* Improve grid layouts */
+  .grid {
+    gap: 0.75rem;
+  }
 }
 
 /* Large Text */
@@ -73,24 +114,10 @@ html {
 .large-text h1 { font-size: 2.5em; }
 .large-text h2 { font-size: 2em; }
 
-/* Color Blind Support */
-.color-blind {
-  --color-success: #0072B2;
-  --color-error: #D55E00;
-  --color-warning: #E69F00;
-  --color-accent: #009E73;
-}
-
 /* Reduced Motion */
 .reduced-motion *, .reduced-motion *:before, .reduced-motion *:after {
   transition: none !important;
   animation: none !important;
-}
-
-/* Keyboard Navigation */
-.keyboard-nav :focus {
-  outline: 2px solid #1976d2 !important;
-  outline-offset: 2px;
 }
 
 /* Screen Reader Mode */
@@ -114,4 +141,254 @@ html {
   clip: rect(0, 0, 0, 0) !important;
   white-space: nowrap !important;
   border: 0 !important;
+}
+
+/* Text truncation utilities */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Markdown Content Styles */
+.prose {
+  color: inherit;
+  max-width: none;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  color: inherit;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose h1 {
+  font-size: 1.5em;
+  font-weight: 700;
+}
+
+.prose h2 {
+  font-size: 1.25em;
+}
+
+.prose h3 {
+  font-size: 1.125em;
+}
+
+.prose p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-bottom: 0.25em;
+  line-height: 1.6;
+}
+
+.prose blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1em;
+  margin: 1em 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.prose code {
+  background-color: #f3f4f6;
+  padding: 0.125em 0.25em;
+  border-radius: 0.25em;
+  font-size: 0.875em;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.prose pre {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: 1em;
+  border-radius: 0.5em;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: inherit;
+}
+
+.prose em {
+  font-style: italic;
+  color: inherit;
+}
+
+.prose a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #2563eb;
+}
+
+/* Dark mode adjustments for markdown */
+[data-theme="dark"] .prose code {
+  background-color: #374151;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .prose blockquote {
+  border-left-color: #4b5563;
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .prose a {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .prose a:hover {
+  color: #93c5fd;
+}
+
+/* Syntax Highlighter Customization */
+.react-syntax-highlighter {
+  border-radius: 0.5em !important;
+  margin: 1em 0 !important;
+}
+
+.react-syntax-highlighter pre {
+  margin: 0 !important;
+  padding: 1em !important;
+  background-color: #1f2937 !important;
+  border-radius: 0.5em !important;
+}
+
+/* Custom Code Block Styles */
+.code-block {
+  position: relative;
+  margin: 1em 0;
+  border-radius: 0.5em;
+  overflow: hidden;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.code-language {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #374151;
+  color: #f3f4f6;
+  padding: 0.25em 0.75em;
+  font-size: 0.75em;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom-left-radius: 0.25em;
+}
+
+.code-content {
+  margin: 0;
+  padding: 1em;
+  background-color: #1f2937;
+  color: #f9fafb;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875em;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+.code-content code {
+  background-color: transparent !important;
+  padding: 0 !important;
+  color: inherit !important;
+  font-family: inherit !important;
+}
+
+/* Syntax Highlighting Colors */
+.code-content .keyword {
+  color: #fbbf24; /* yellow */
+  font-weight: 600;
+}
+
+.code-content .string {
+  color: #34d399; /* green */
+}
+
+.code-content .comment {
+  color: #9ca3af; /* gray */
+  font-style: italic;
+}
+
+/* Dark mode adjustments for custom code blocks */
+[data-theme="dark"] .code-block {
+  background-color: #111827;
+  border-color: #374151;
+}
+
+[data-theme="dark"] .code-language {
+  background-color: #374151;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .code-content {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .code-content .keyword {
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .code-content .string {
+  color: #34d399;
+}
+
+[data-theme="dark"] .code-content .comment {
+  color: #9ca3af;
+}
+
+/* Lesson Content Specific Styles */
+.lesson-content .prose {
+  font-size: 0.95em;
+}
+
+.lesson-content .prose h1,
+.lesson-content .prose h2,
+.lesson-content .prose h3 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.lesson-content .prose p:last-child {
+  margin-bottom: 0;
+}
+
+.lesson-content .prose ul:last-child,
+.lesson-content .prose ol:last-child {
+  margin-bottom: 0;
 }

@@ -23,6 +23,7 @@ const Dashboard = () => {
     isLoading: userLoading 
   } = useUser();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // Simulate loading
@@ -31,6 +32,16 @@ const Dashboard = () => {
     }, 1000);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  // Check for mobile device
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   if (isLoading || userLoading) {
@@ -76,11 +87,10 @@ const Dashboard = () => {
       <Sidebar isCollapsed={sidebarCollapsed} onCollapseChange={setSidebarCollapsed} />
       <StudySessionControls />
       <MobileNavigation />
-      <main
-        className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-60'} px-4 lg:px-8`}
+      <main className={`flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 ${isMobile ? 'ml-0' : sidebarCollapsed ? 'ml-16' : 'ml-60'}`}
         style={{ minHeight: '100vh' }}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto">
           <div className="p-4 lg:p-8">
             <Breadcrumb />
             

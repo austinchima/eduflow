@@ -49,12 +49,9 @@ const initialState = {
       exportData: true
     },
     accessibility: {
-      highContrast: false,
       largeText: false,
       screenReader: false,
-      reducedMotion: false,
-      keyboardNavigation: true,
-      colorBlindSupport: false
+      reducedMotion: false
     },
     account: {
       twoFactorAuth: false,
@@ -407,7 +404,7 @@ function UserProvider({ children }) {
   // Load user courses from backend
   const loadUserCourses = async (userId) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/users/courses`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/courses/user`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -774,16 +771,20 @@ function UserProvider({ children }) {
 
   const getWeeklyStudyTime = () => {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    // TODO: Replace with real tracked data if available
+    // For now, return zeros for all days if no data exists
     return days.map(day => ({
-      day,
-      hours: Math.random() * 6 + 1 // This would come from actual study tracking
+      period: day,
+      hours: 0
     }));
   };
 
   const getCourseDistribution = () => {
+    // TODO: Replace with real tracked data if available
+    // For now, return zeros for all courses if no data exists
     return state.academic.courses.map(course => ({
       name: course.name,
-      hours: Math.random() * 10 + 2 // This would come from actual study tracking
+      hours: 0
     }));
   };
 

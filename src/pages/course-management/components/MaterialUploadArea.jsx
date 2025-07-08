@@ -3,10 +3,10 @@ import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import { uploadMaterial } from '../../../utils/materialUpload';
 import { useUser } from '../../../context/UserContext';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 import 'react-toastify/dist/ReactToastify.css';
 
-const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hidden, showUpload = true, courses: propCourses }) => {
+const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hidden, showUpload = true, courses: propCourses, uploadingCourseId }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -15,7 +15,6 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
   const { user, actions, academic } = useUser();
   const courses = propCourses || academic?.courses || [];
   const [expandedCourseId, setExpandedCourseId] = useState(null);
-  const [uploadingCourseId, setUploadingCourseId] = useState(null);
 
   const acceptedFileTypes = {
     'application/pdf': '.pdf',
@@ -47,7 +46,7 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
-    handleFiles(files, uploadingCourseId);
+    handleFiles(files, uploadingCourseId || selectedCourse?.id);
   };
 
   // Fetch all uploaded files for the user and course
@@ -89,13 +88,13 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
 
   // Handler for plus button: open file picker for a specific course
   const handlePlusClick = (courseId) => {
-    setUploadingCourseId(courseId);
     inputRef.current.value = null; // Reset file input
     inputRef.current.click();
   };
 
   // Enhanced handleFiles with progress, now takes courseId
   const handleFiles = async (files, courseId) => {
+    courseId = uploadingCourseId || courseId || selectedCourse?.id;
     if (!courseId) {
       alert('Please select a course before uploading files.');
       return;
@@ -106,7 +105,7 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
       return isValidType && isValidSize;
     });
     if (validFiles.length === 0) {
-      toast.error('No valid files selected for upload.', { containerId: 'toast-container' });
+      toast.error('No valid files selected for upload.');
       return;
     }
     const uploadedMaterials = [];
@@ -124,13 +123,12 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
           [fileId]: { ...prev[fileId], progress: 100, status: 'completed' }
         }));
         uploadedMaterials.push(material);
-        toast.success(`Uploaded ${file.name} successfully!`, { containerId: 'toast-container' });
       } catch (err) {
         setUploadProgress(prev => ({
           ...prev,
           [fileId]: { ...prev[fileId], status: 'error' }
         }));
-        toast.error(`Failed to upload ${file.name}.`, { containerId: 'toast-container' });
+        toast.error(`Failed to upload ${file.name}.`);
         console.error('File upload failed:', err);
       }
     }
@@ -151,7 +149,10 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
       console.error('Failed to fetch materials:', err);
     }
     setUploadProgress({});
-    setUploadingCourseId(null);
+    if (uploadedMaterials.length > 0) {
+      const fileNames = uploadedMaterials.map(m => m.originalName || m.filename).join(', ');
+      toast.success(`Uploaded ${uploadedMaterials.length} material${uploadedMaterials.length > 1 ? 's' : ''}: ${fileNames}`);
+    }
     if (onUploadComplete && uploadedMaterials.length > 0) {
       const course = courses.find(c => c.id === courseId);
       onUploadComplete(course, uploadedMaterials);
@@ -174,15 +175,15 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
     return 'File';
   };
 
-  const handleDeleteMaterial = async (materialId) => {
+  const handleDeleteMaterial = async (materialId, courseId) => {
     if (window.confirm('Are you sure you want to delete this material?')) {
       try {
-        await actions.deleteMaterial(materialId, selectedCourse.id);
+        await actions.deleteMaterial(materialId, courseId);
         // Remove from local state as well
         setUploadedFiles(prev => {
           const updated = prev.filter(file => file.id !== materialId);
-          if (selectedCourse?.id && actions?.updateCourse) {
-            actions.updateCourse(selectedCourse.id, { materialCount: updated.length });
+          if (courseId && actions?.updateCourse) {
+            actions.updateCourse(courseId, { materialCount: updated.length });
           }
           return updated;
         });
@@ -204,7 +205,7 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
       const { material } = await response.json();
       window.open(material.signedUrl, '_blank');
     } catch (err) {
-      toast.error('Failed to download file. Please try again.', { containerId: 'toast-container' });
+      toast.error('Failed to download file. Please try again.');
     } finally {
       setDownloadingId(null);
     }
@@ -239,10 +240,10 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
           ? ` Deleted ${details.materialsDeleted} materials and ${details.gcsFilesDeleted} files from cloud storage.`
           : ` Deleted ${details.materialsDeleted} materials.`;
         
-        toast.success(message + detailsMessage, { containerId: 'toast-container' });
+        toast.success(message + detailsMessage);
       } catch (err) {
         console.error('Error deleting course:', err);
-        toast.error(`Failed to delete course: ${err.message}`, { containerId: 'toast-container' });
+        toast.error(`Failed to delete course: ${err.message}`);
       }
     }
   };

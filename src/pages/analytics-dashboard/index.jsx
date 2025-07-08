@@ -14,12 +14,14 @@ import TimeRangeSelector from './components/TimeRangeSelector';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 import { useUser } from '../../context/UserContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const AnalyticsDashboard = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('week');
   const [isLoading, setIsLoading] = useState(true);
   const { academic, studyData, actions } = useUser();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { isDark } = useTheme();
 
   const timeRanges = [
     { value: 'week', label: 'Week' },
@@ -28,172 +30,194 @@ const AnalyticsDashboard = () => {
   ];
 
   // Calculate KPI data from user data
+  const weeklyStudyTime = actions.getWeeklyStudyTime();
+  const totalWeeklyHours = weeklyStudyTime && weeklyStudyTime.length > 0
+    ? weeklyStudyTime.reduce((sum, d) => sum + d.hours, 0)
+    : 0;
+  const quizAverage = academic.quizzes && academic.quizzes.length > 0
+    ? (academic.quizzes.reduce((sum, q) => sum + q.score, 0) / academic.quizzes.length)
+    : 0;
+  const hasCourses = academic.courses && academic.courses.length > 0;
+
   const kpiData = [
     {
       title: 'Current GPA',
-      value: actions.calculateGPA().toFixed(1),
+      value: Number(actions.calculateGPA() || 0).toFixed(1),
       subtitle: 'Out of 4.0',
       icon: 'GraduationCap',
       trend: 'up',
-      trendValue: '+0.2',
+      trendValue: '+0.0',
       color: 'success'
     },
     {
       title: 'Study Hours This Week',
-      value: '28.5', // This would be calculated from actual study time tracking
+      value: totalWeeklyHours.toFixed(1),
       subtitle: 'Hours completed',
       icon: 'Clock',
       trend: 'up',
-      trendValue: '+5.2h',
+      trendValue: '+0.0h',
       color: 'primary'
     },
     {
       title: 'Course Completion',
-      value: `${Math.round(academic.courses.reduce((sum, course) => sum + course.progress, 0) / Math.max(academic.courses.length, 1))}%`,
+      value: hasCourses ? `${Math.round(academic.courses.reduce((sum, course) => sum + course.progress, 0) / Math.max(academic.courses.length, 1))}%` : '0%',
       subtitle: 'Average across all courses',
       icon: 'CheckCircle',
       trend: 'up',
-      trendValue: '+12%',
+      trendValue: '+0%',
       color: 'accent'
     },
     {
       title: 'Quiz Average',
-      value: '91%', // This would be calculated from actual quiz results
+      value: `${Math.round(quizAverage)}%`,
       subtitle: 'Last 10 quizzes',
       icon: 'Award',
       trend: 'down',
-      trendValue: '-3%',
+      trendValue: '0%',
       color: 'warning'
     }
   ];
 
   // Get study time data based on user data
   const studyTimeData = {
-    week: actions.getWeeklyStudyTime(),
-    month: [
-      { period: 'Week 1', hours: 22.5 },
-      { period: 'Week 2', hours: 28.3 },
-      { period: 'Week 3', hours: 31.2 },
-      { period: 'Week 4', hours: 26.8 }
+    week: weeklyStudyTime && weeklyStudyTime.length > 0 ? weeklyStudyTime : [
+      { period: 'Mon', hours: 0 },
+      { period: 'Tue', hours: 0 },
+      { period: 'Wed', hours: 0 },
+      { period: 'Thu', hours: 0 },
+      { period: 'Fri', hours: 0 },
+      { period: 'Sat', hours: 0 },
+      { period: 'Sun', hours: 0 }
     ],
-    semester: [
-      { period: 'Jan 2024', hours: 95.2 },
-      { period: 'Feb 2024', hours: 102.8 },
-      { period: 'Mar 2024', hours: 88.5 },
-      { period: 'Apr 2024', hours: 115.3 },
-      { period: 'May 2024', hours: 78.9 }
+    month: (studyData.month && studyData.month.length > 0) ? studyData.month : [
+      { period: 'Week 1', hours: 0 },
+      { period: 'Week 2', hours: 0 },
+      { period: 'Week 3', hours: 0 },
+      { period: 'Week 4', hours: 0 }
+    ],
+    semester: (studyData.semester && studyData.semester.length > 0) ? studyData.semester : [
+      { period: 'Jan 2024', hours: 0 },
+      { period: 'Feb 2024', hours: 0 },
+      { period: 'Mar 2024', hours: 0 },
+      { period: 'Apr 2024', hours: 0 },
+      { period: 'May 2024', hours: 0 }
     ]
   };
 
   // Get course performance data from user courses
-  const coursePerformanceData = academic.courses.map(course => ({
-    course: course.name,
-    score: course.currentGrade
-  }));
+  const coursePerformanceData = hasCourses
+    ? academic.courses.map(course => ({
+        course: course.name,
+        score: course.currentGrade
+      }))
+    : [];
 
-  // Learning pattern data (this would come from actual learning analytics)
-  const learningPatternData = [
-    { subject: 'Memory', value: 85 },
-    { subject: 'Focus', value: 78 },
-    { subject: 'Speed', value: 92 },
-    { subject: 'Accuracy', value: 88 },
-    { subject: 'Retention', value: 91 },
-    { subject: 'Application', value: 83 }
-  ];
+  // Learning pattern data (should come from analytics if available)
+  const learningPatternData = (studyData.learningPatterns && studyData.learningPatterns.length > 0)
+    ? studyData.learningPatterns
+    : [
+        { subject: 'Memory', value: 0 },
+        { subject: 'Focus', value: 0 },
+        { subject: 'Speed', value: 0 },
+        { subject: 'Accuracy', value: 0 },
+        { subject: 'Retention', value: 0 },
+        { subject: 'Application', value: 0 }
+      ];
 
-  // Get AI insights based on user data
-  const aiInsights = [
-    {
-      type: 'recommendation',
-      title: 'Optimal Study Time Detected',
-      description: 'Your performance peaks between 2-4 PM. Consider scheduling difficult subjects during this time.',
-      action: 'Adjust Schedule'
-    },
-    {
-      type: 'warning',
-      title: 'Course Performance Alert',
-      description: `Your ${academic.courses.find(c => c.currentGrade < 80)?.name || 'course'} scores need attention. Additional practice recommended.`,
-      action: 'View Resources'
-    },
-    {
-      type: 'achievement',
-      title: 'Study Streak Milestone',
-      description: `Congratulations! You've maintained a ${academic.studyStreak.current}-day consistent study streak.`,
-      action: 'Share Achievement'
-    },
-    {
-      type: 'pattern',
-      title: 'Learning Style Insight',
-      description: 'You retain information 23% better with visual aids. Try incorporating more diagrams and charts.',
-      action: 'Explore Tools'
-    }
-  ];
+  // Get AI insights based on user data (replace with dynamic if available)
+  const aiInsights = (studyData.aiInsights && studyData.aiInsights.length > 0)
+    ? studyData.aiInsights
+    : [
+        {
+          type: 'info',
+          title: 'No Insights Yet',
+          description: 'AI insights will appear here once you start studying and analytics are available.',
+          action: null
+        }
+      ];
 
   // Progress tracking data
   const progressGoals = [
     {
       title: 'Daily Study Goal',
-      current: 4.2,
-      target: 5.0,
+      current: Number(studyData.todayHours || 0).toFixed(1),
+      target: Number(academic.studyGoal || 5).toFixed(1),
       unit: 'hours',
-      percentage: 84,
+      percentage: academic.studyGoal ? Math.round(((studyData.todayHours || 0) / (academic.studyGoal || 5)) * 100) : 0,
       startDate: 'Jan 1',
       deadline: 'Dec 31',
-      streak: academic.studyStreak.current,
+      streak: academic.studyStreak ? academic.studyStreak.current : 0,
       icon: 'Clock'
     },
     {
       title: 'GPA Target',
-      current: actions.calculateGPA(),
-      target: academic.gpa.target,
+      current: Number(actions.calculateGPA() || 0).toFixed(1),
+      target: Number((academic.gpa && academic.gpa.target) || 4).toFixed(1),
       unit: 'points',
-      percentage: Math.round((actions.calculateGPA() / academic.gpa.target) * 100),
+      percentage: academic.gpa && academic.gpa.target ? Math.round((actions.calculateGPA() / academic.gpa.target) * 100) : 0,
       startDate: 'Sep 1',
       deadline: 'May 31',
       icon: 'TrendingUp'
     },
     {
       title: 'Course Completion',
-      current: Math.round(academic.courses.reduce((sum, course) => sum + course.progress, 0) / Math.max(academic.courses.length, 1)),
+      current: hasCourses ? Math.round(academic.courses.reduce((sum, course) => sum + course.progress, 0) / Math.max(academic.courses.length, 1)) : 0,
       target: 95,
       unit: '%',
-      percentage: Math.round((academic.courses.reduce((sum, course) => sum + course.progress, 0) / Math.max(academic.courses.length, 1)) / 95 * 100),
+      percentage: hasCourses ? Math.round((academic.courses.reduce((sum, course) => sum + course.progress, 0) / Math.max(academic.courses.length, 1)) / 95 * 100) : 0,
       startDate: 'Sep 1',
       deadline: 'Dec 15',
       icon: 'BookOpen'
     },
     {
       title: 'Quiz Performance',
-      current: 91,
+      current: Math.round(quizAverage),
       target: 95,
       unit: '%',
-      percentage: 96,
+      percentage: quizAverage ? Math.round((quizAverage / 95) * 100) : 0,
       startDate: 'Sep 1',
       deadline: 'Dec 15',
-      streak: 8,
+      streak: academic.studyStreak ? academic.studyStreak.current : 0,
       icon: 'Award'
     }
   ];
 
   // Course analytics data
-  const courseAnalyticsData = academic.courses.map(course => ({
-    id: course.id,
-    name: course.name,
-    averageGrade: course.currentGrade,
-    studyHours: Math.random() * 50 + 20, // This would come from actual study tracking
-    completionRate: course.progress,
-    improvement: Math.random() * 20 - 10, // This would be calculated from historical data
-    recentActivities: [
-      { title: `${course.name} Quiz`, date: '2 days ago', score: course.currentGrade + Math.random() * 10 - 5, icon: 'FileText' },
-      { title: `${course.name} Assignment`, date: '5 days ago', score: course.currentGrade + Math.random() * 10 - 5, icon: 'Edit' },
-      { title: `${course.name} Practice`, date: '1 week ago', score: course.currentGrade + Math.random() * 10 - 5, icon: 'BarChart' }
-    ],
-    recommendations: [
-      course.currentGrade < 80 ? `Focus more on ${course.name} - your weakest area` : `Excellent progress in ${course.name}!`,
-      'Practice word problems to improve application skills',
-      'Review key concepts before the midterm'
-    ]
-  }));
+  const courseAnalyticsData = hasCourses
+    ? academic.courses.map(course => ({
+        id: course.id,
+        name: course.name,
+        averageGrade: Math.round(course.currentGrade),
+        studyHours: course.studyHours ? Number(course.studyHours).toFixed(1) : '0.0',
+        completionRate: Math.round(course.progress),
+        improvement: course.improvement ? Number(course.improvement).toFixed(1) : '0.0',
+        recentActivities: (course.recentActivities || []).map(activity => ({
+          ...activity,
+          score: activity.score ? Math.round(activity.score) : 0
+        })),
+        recommendations: course.recommendations || [
+          course.currentGrade < 80 ? `Focus more on ${course.name} - your weakest area` : `Excellent progress in ${course.name}!`,
+          'Practice word problems to improve application skills',
+          'Review key concepts before the midterm'
+        ]
+      }))
+    : [{
+        id: 'no-data',
+        name: 'No Courses',
+        averageGrade: 0,
+        studyHours: '0.0',
+        completionRate: 0,
+        improvement: '0.0',
+        recentActivities: [],
+        recommendations: ['No course analytics available yet.']
+      }];
+
+  // Dynamic values for Study Analytics
+  const weeklyStudyData = studyTimeData.week;
+  const totalHours = weeklyStudyData.reduce((sum, d) => sum + d.hours, 0).toFixed(1);
+  const dailyAverage = (totalHours / weeklyStudyData.length).toFixed(1);
+  const activeCourses = academic.courses.length;
+  const goalProgress = progressGoals[0]?.percentage || 0;
 
   useEffect(() => {
     // Simulate loading
@@ -289,6 +313,43 @@ const AnalyticsDashboard = () => {
               {kpiData.map((kpi, index) => (
                 <KPICard key={index} {...kpi} />
               ))}
+            </div>
+
+            {/* Study Analytics Section */}
+            <div className="bg-surface rounded-lg border border-border p-6 card-elevation mb-8">
+              <div className="flex items-center mb-6">
+                <div className="flex items-center justify-center w-10 h-10 bg-primary-50 text-primary rounded-lg mr-3">
+                  <Icon name="BarChart2" size={20} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-text-primary dark:text-white mb-0.5">Study Analytics</h2>
+                  <p className="text-sm text-text-secondary dark:text-white/80">{selectedTimeRange.charAt(0).toUpperCase() + selectedTimeRange.slice(1)} overview and course distribution</p>
+                </div>
+              </div>
+              {Array.isArray(studyTimeData[selectedTimeRange]) && studyTimeData[selectedTimeRange].length > 0 && studyTimeData[selectedTimeRange].some(d => d.hours > 0) ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                  <div className={`rounded-lg p-6 text-center ${isDark ? 'bg-primary-900' : 'bg-primary-50'}`}> 
+                    <div className={`text-3xl font-bold mb-1 ${isDark ? 'text-white' : 'text-primary'}`}>{totalHours}</div>
+                    <div className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-primary'}`}>Total Hours</div>
+                  </div>
+                  <div className={`rounded-lg p-6 text-center ${isDark ? 'bg-success-900' : 'bg-success-50'}`}> 
+                    <div className={`text-3xl font-bold mb-1 ${isDark ? 'text-white' : 'text-success'}`}>{dailyAverage}</div>
+                    <div className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-success'}`}>Daily Average</div>
+                  </div>
+                  <div className={`rounded-lg p-6 text-center ${isDark ? 'bg-success-900' : 'bg-success-50'}`}> 
+                    <div className={`text-3xl font-bold mb-1 ${isDark ? 'text-white' : 'text-success'}`}>{activeCourses}</div>
+                    <div className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-success'}`}>Active Courses</div>
+                  </div>
+                  <div className={`rounded-lg p-6 text-center ${isDark ? 'bg-warning-900' : 'bg-warning-50'}`}> 
+                    <div className={`text-3xl font-bold mb-1 ${isDark ? 'text-white' : 'text-warning'}`}>{goalProgress}%</div>
+                    <div className={`text-sm font-medium ${isDark ? 'text-white/80' : 'text-warning'}`}>Goal Progress</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-32 text-text-muted text-lg">
+                  No study analytics data available.
+                </div>
+              )}
             </div>
 
             {/* Charts Section */}

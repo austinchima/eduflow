@@ -26,6 +26,7 @@ gcloud services enable iam.googleapis.com
 ```
 
 Or enable them manually in the Google Cloud Console:
+
 - Cloud Storage API
 - Identity and Access Management (IAM) API
 
@@ -129,11 +130,13 @@ GCS_KEY_FILE=./gcs-key.json
 ### Update Service Account Email
 
 In `server/utils/setupGCS.js`, replace:
+
 ```javascript
 'serviceAccount:your-service-account@your-project.iam.gserviceaccount.com'
 ```
 
 With your actual service account email:
+
 ```javascript
 'serviceAccount:eduflow-storage-service@your-project-id.iam.gserviceaccount.com'
 ```
@@ -270,4 +273,4 @@ For production deployment:
 - [Google Cloud Storage Documentation](https://cloud.google.com/storage/docs)
 - [IAM Permissions Guide](https://cloud.google.com/storage/docs/access-control/using-iam-permissions)
 - [Signed URLs Documentation](https://cloud.google.com/storage/docs/access-control/signed-urls)
-- [CORS Configuration](https://cloud.google.com/storage/docs/cross-origin) 
+- [CORS Configuration](https://cloud.google.com/storage/docs/cross-origin)

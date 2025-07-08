@@ -167,8 +167,8 @@ const FlashcardStudySession = () => {
         <StudySessionControls />
         <MobileNavigation />
         
-        <main className="lg:ml-60 min-h-screen">
-          <div className="p-4 lg:p-8">
+        <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
+          <div className="w-full max-w-lg mx-auto">
             <SessionSettings
               availableDecks={availableDecks}
               onStartSession={handleStartSession}
@@ -188,8 +188,8 @@ const FlashcardStudySession = () => {
         <StudySessionControls />
         <MobileNavigation />
         
-        <main className="lg:ml-60 min-h-screen">
-          <div className="p-4 lg:p-8">
+        <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
+          <div className="w-full max-w-lg mx-auto">
             <SessionComplete
               sessionData={{
                 totalCards: sessionCards.length,
@@ -215,8 +215,8 @@ const FlashcardStudySession = () => {
         <StudySessionControls />
         <MobileNavigation />
         
-        <main className="lg:ml-60 min-h-screen">
-          <div className="p-4 lg:p-8">
+        <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
+          <div className="w-full max-w-lg mx-auto">
             <div className="text-center py-12">
               <h2 className="text-2xl font-bold text-text-primary mb-4">
                 No cards available for this session
@@ -245,8 +245,8 @@ const FlashcardStudySession = () => {
       <StudySessionControls />
       <MobileNavigation />
       
-      <main className="lg:ml-60 min-h-screen">
-        <div className="p-4 lg:p-8">
+      <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
+        <div className="w-full max-w-lg mx-auto">
           {/* Session Progress */}
           <SessionProgress
             currentCard={currentCardIndex + 1}

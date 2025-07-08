@@ -34,21 +34,21 @@ const ProgressOverview = ({ progressData }) => {
     : 0;
 
   return (
-    <div className="bg-surface border border-border rounded-lg p-6 mb-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-surface border border-border rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
         <div className="flex items-center space-x-2">
-          <Icon name="TrendingUp" size={20} className="icon-contrast" />
-          <h2 className="text-lg font-semibold text-text-primary">Progress Overview</h2>
+          <Icon name="TrendingUp" size={16} className="sm:w-5 sm:h-5 icon-contrast" />
+          <h2 className="text-base sm:text-lg font-semibold text-text-primary">Progress Overview</h2>
         </div>
         
         <div className="text-right">
-          <div className="text-2xl font-bold text-text-primary">{completionRate}%</div>
+          <div className="text-xl sm:text-2xl font-bold text-text-primary">{completionRate}%</div>
           <div className="text-xs text-text-secondary">Overall Progress</div>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <div className="w-full h-2 bg-secondary-100 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500 ease-smooth"
@@ -58,13 +58,13 @@ const ProgressOverview = ({ progressData }) => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {stats.map((stat) => (
           <div key={stat.label} className="text-center">
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2 ${stat.color}`}>
-              <Icon name={stat.icon} size={20} color="currentColor" />
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mx-auto mb-2 ${stat.color}`}>
+              <Icon name={stat.icon} size={16} className="sm:w-5 sm:h-5" color="currentColor" />
             </div>
-            <div className="text-2xl font-bold text-text-primary">{stat.value}</div>
+            <div className="text-lg sm:text-2xl font-bold text-text-primary">{stat.value}</div>
             <div className="text-xs text-text-secondary">{stat.label}</div>
           </div>
         ))}
@@ -72,18 +72,18 @@ const ProgressOverview = ({ progressData }) => {
 
       {/* Weekly Progress */}
       {progressData.weeklyProgress && (
-        <div className="mt-6 pt-6 border-t border-border">
-          <h3 className="font-medium text-text-primary mb-3">This Week</h3>
-          <div className="grid grid-cols-2 gap-4">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-border">
+          <h3 className="font-medium text-text-primary mb-3 text-sm sm:text-base">This Week</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="flex items-center space-x-2">
-              <Icon name="Target" size={16} color="var(--color-success)" />
-              <span className="text-sm text-text-secondary">
+              <Icon name="Target" size={14} className="sm:w-4 sm:h-4" color="var(--color-success)" />
+              <span className="text-xs sm:text-sm text-text-secondary">
                 {progressData.weeklyProgress.completed} tools completed
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              <Icon name="Clock" size={16} color="var(--color-warning)" />
-              <span className="text-sm text-text-secondary">
+              <Icon name="Clock" size={14} className="sm:w-4 sm:h-4" color="var(--color-warning)" />
+              <span className="text-xs sm:text-sm text-text-secondary">
                 {progressData.weeklyProgress.studyTime} study time
               </span>
             </div>
