@@ -168,7 +168,7 @@ const FlashcardStudySession = () => {
         <MobileNavigation />
         
         <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
-          <div className="w-full max-w-lg mx-auto">
+          <div className="w-full max-w-4xl xl:max-w-5xl mx-auto">
             <SessionSettings
               availableDecks={availableDecks}
               onStartSession={handleStartSession}
@@ -189,7 +189,7 @@ const FlashcardStudySession = () => {
         <MobileNavigation />
         
         <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
-          <div className="w-full max-w-lg mx-auto">
+          <div className="w-full max-w-4xl xl:max-w-5xl mx-auto">
             <SessionComplete
               sessionData={{
                 totalCards: sessionCards.length,
@@ -216,7 +216,7 @@ const FlashcardStudySession = () => {
         <MobileNavigation />
         
         <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
-          <div className="w-full max-w-lg mx-auto">
+          <div className="w-full max-w-4xl xl:max-w-5xl mx-auto">
             <div className="text-center py-12">
               <h2 className="text-2xl font-bold text-text-primary mb-4">
                 No cards available for this session
@@ -246,7 +246,7 @@ const FlashcardStudySession = () => {
       <MobileNavigation />
       
       <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 lg:ml-60">
-        <div className="w-full max-w-lg mx-auto">
+        <div className="w-full max-w-4xl xl:max-w-5xl mx-auto">
           {/* Session Progress */}
           <SessionProgress
             currentCard={currentCardIndex + 1}

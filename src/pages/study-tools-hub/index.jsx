@@ -192,7 +192,7 @@ const StudyToolsHub = () => {
       <main className={`flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8 ${isMobile ? 'ml-0' : sidebarCollapsed ? 'ml-16' : 'ml-60'}`}
         style={{ minHeight: '100vh' }}
       >
-        <div className="w-full max-w-2xl mx-auto">
+        <div className="w-full max-w-6xl xl:max-w-7xl mx-auto">
           <Breadcrumb />
 
           {/* Header */}

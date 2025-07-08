@@ -123,20 +123,20 @@ const ProfileSettings = () => {
       <StudySessionControls />
       <MobileNavigation />
       <main className="flex-1 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 lg:px-8">
-        <div className="w-full max-w-2xl mx-auto">
+        <div className="w-full max-w-6xl xl:max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
           <div className="p-4 lg:p-8">
             <Breadcrumb />
             
             {/* Header */}
-            <div className="mb-6 lg:mb-8">
+            <div className="mb-8 lg:mb-10">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center icon-on-colored">
-                    <Icon name="Settings" size={24} color="white" />
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center icon-on-colored">
+                    <Icon name="Settings" size={28} color="white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl lg:text-3xl font-bold text-text-primary">Profile Settings</h1>
-                    <p className="text-sm lg:text-base text-text-secondary">Manage your account and personalize your EduFlow experience</p>
+                    <h1 className="text-3xl lg:text-4xl font-bold text-text-primary">Profile Settings</h1>
+                    <p className="text-base lg:text-lg text-text-secondary">Manage your account and personalize your EduFlow experience</p>
                   </div>
                 </div>
                 
@@ -154,9 +154,9 @@ const ProfileSettings = () => {
               </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-8">
               {/* Navigation Tabs */}
-              <div className={`${isMobile ? 'w-full' : 'w-64'} flex-shrink-0`}>
+              <div className={`${isMobile ? 'w-full' : 'w-72 xl:w-80'} flex-shrink-0`}>
                 {/* Mobile Tab Selector */}
                 {isMobile && (
                   <div className="mb-4">

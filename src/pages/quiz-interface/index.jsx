@@ -515,7 +515,7 @@ For text-input questions, provide a clear, specific answer.`;
 
       {/* Main Content */}
       <div className="flex-1 p-4 lg:p-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl xl:max-w-7xl mx-auto">
           {/* Auto-save Status */}
           {autoSaveStatus === 'saving' && (
             <div className="mb-4 text-center">
