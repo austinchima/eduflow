@@ -219,7 +219,7 @@ const StudyCoursePage = () => {
         const token = localStorage.getItem('token');
         
         // First, try to fetch existing modules
-        const res = await fetch(`/api/courses/${id}/modules`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses/${id}/modules`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -258,7 +258,7 @@ const StudyCoursePage = () => {
       const token = localStorage.getItem('token');
       
       // Fetch course materials
-      const materialsRes = await fetch(`/api/materials?courseId=${id}`, {
+      const materialsRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials?courseId=${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -271,7 +271,7 @@ const StudyCoursePage = () => {
       console.log('Fetched materials:', materials.length);
       
       // Generate content using AI
-      const generateRes = await fetch('/api/ai/generate-course-content-from-materials', {
+      const generateRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/ai/generate-course-content-from-materials`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -298,7 +298,7 @@ const StudyCoursePage = () => {
       const generatedModules = generateData.content;
       
       // Save the generated modules to the course
-      const saveRes = await fetch(`/api/courses/${id}/modules`, {
+      const saveRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses/${id}/modules`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

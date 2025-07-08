@@ -18,6 +18,7 @@ const AuthPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [debugInfo, setDebugInfo] = useState({});
+  const [apiTestResult, setApiTestResult] = useState('');
 
   // Add debugging information
   useEffect(() => {
@@ -33,6 +34,27 @@ const AuthPage = () => {
       }
     });
   }, [user, isLoading]);
+
+  const testApiConnection = async () => {
+    try {
+      setApiTestResult('Testing...');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+      console.log('Testing API connection to:', apiUrl);
+      
+      const response = await fetch(`${apiUrl}/test`);
+      if (response.ok) {
+        const data = await response.json();
+        setApiTestResult(`✅ API is working: ${data.message}`);
+        console.log('API test successful:', data);
+      } else {
+        setApiTestResult(`❌ API test failed: ${response.status} ${response.statusText}`);
+        console.error('API test failed:', response.status, response.statusText);
+      }
+    } catch (error) {
+      setApiTestResult(`❌ API connection error: ${error.message}`);
+      console.error('API connection error:', error);
+    }
+  };
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -72,6 +94,20 @@ const AuthPage = () => {
           <div className="mb-4 p-3 bg-gray-100 rounded text-xs">
             <h4 className="font-bold mb-2">Debug Info:</h4>
             <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+            <div className="mt-2">
+              <Button
+                variant="secondary"
+                onClick={testApiConnection}
+                className="text-xs"
+              >
+                Test API Connection
+              </Button>
+              {apiTestResult && (
+                <div className="mt-2 text-xs">
+                  <strong>API Test:</strong> {apiTestResult}
+                </div>
+              )}
+            </div>
           </div>
         )}
         
