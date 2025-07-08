@@ -5,7 +5,7 @@ export async function uploadMaterial(file, courseId) {
   formData.append('file', file);
   formData.append('courseId', courseId);
 
-  const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials/upload`, {
+  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials/upload`, {
     method: 'POST',
     body: formData,
     headers: {

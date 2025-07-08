@@ -404,7 +404,7 @@ function UserProvider({ children }) {
   // Load user courses from backend
   const loadUserCourses = async (userId) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/courses/user`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses/user`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -442,7 +442,7 @@ function UserProvider({ children }) {
           
           // Load materials for this course
           try {
-            const materialsResponse = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials?courseId=${course._id}`, {
+            const materialsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials?courseId=${course._id}`, {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
               }
@@ -488,7 +488,7 @@ function UserProvider({ children }) {
       }
 
       // Update backend
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/auth/users/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/auth/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -587,7 +587,7 @@ function UserProvider({ children }) {
       console.log('Prepared course data:', newCourse);
       
       // Save to backend
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/courses`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -638,7 +638,7 @@ function UserProvider({ children }) {
   const updateCourse = async (courseId, updates) => {
     try {
       // Update in backend
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/courses/${courseId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses/${courseId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -663,7 +663,7 @@ function UserProvider({ children }) {
   const removeCourse = async (courseId) => {
     try {
       // Delete from backend
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/courses/${courseId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses/${courseId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -936,7 +936,7 @@ function UserProvider({ children }) {
   const deleteMaterial = async (materialId, courseId) => {
     try {
       // Delete from backend
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials/${materialId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials/${materialId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

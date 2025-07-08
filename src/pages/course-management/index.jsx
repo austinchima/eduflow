@@ -256,15 +256,15 @@ const CourseManagement = () => {
               <Breadcrumb />
               
               {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-10">
                 <div>
-                  <h1 className="text-3xl font-bold text-text-primary mb-2">Course Management</h1>
-                  <p className="text-text-secondary">
+                  <h1 className="text-3xl font-bold text-text-primary mb-3">Course Management</h1>
+                  <p className="text-text-secondary text-lg">
                     Organize your academic coursework and upload materials for AI-powered learning
                   </p>
                 </div>
                 
-                <div className="flex items-center space-x-3 mt-4 sm:mt-0">
+                <div className="flex items-center space-x-4 mt-6 sm:mt-0">
                   {/* View Mode Toggle */}
                   <div className="flex items-center bg-secondary-50 rounded-lg p-1">
                     <Button
@@ -295,28 +295,34 @@ const CourseManagement = () => {
               </div>
 
               {/* Filters */}
-              <CourseFilters
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                selectedSemester={selectedSemester}
-                setSelectedSemester={setSelectedSemester}
-                selectedStatus={selectedStatus}
-                setSelectedStatus={setSelectedStatus}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-                semesters={getUniqueSemesters()}
-              />
+              <div className="mb-8">
+                <CourseFilters
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  selectedSemester={selectedSemester}
+                  setSelectedSemester={setSelectedSemester}
+                  selectedStatus={selectedStatus}
+                  setSelectedStatus={setSelectedStatus}
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                  semesters={getUniqueSemesters()}
+                />
+              </div>
+              
               {/* Always-visible course material card list */}
-              <MaterialUploadArea courses={filteredAndSortedCourses} />
+              <div className="mb-10">
+                <MaterialUploadArea courses={filteredAndSortedCourses} />
+              </div>
+              
               {/* Courses Grid/List and Analytics Sidebar */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Courses Section */}
                 <div className="xl:col-span-2">
                   {/* Results Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold text-text-primary">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-semibold text-text-primary">
                       Your Courses ({filteredAndSortedCourses.length})
                     </h2>
                     
@@ -342,8 +348,8 @@ const CourseManagement = () => {
                   {filteredAndSortedCourses.length > 0 ? (
                     <div className={`
                       ${viewMode === 'grid' 
-                        ? 'grid grid-cols-1 md:grid-cols-2 gap-6' 
-                        : 'space-y-4'
+                        ? 'grid grid-cols-1 md:grid-cols-2 gap-8' 
+                        : 'space-y-6'
                       }
                     `}>
                       {filteredAndSortedCourses.map(course => (
@@ -361,12 +367,12 @@ const CourseManagement = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12 bg-surface border border-border rounded-lg">
-                      <Icon name="BookOpen" size={48} className="mx-auto text-text-muted mb-4" />
-                      <h3 className="text-lg font-medium text-text-primary mb-2">
+                    <div className="text-center py-16 bg-surface border border-border rounded-xl">
+                      <Icon name="BookOpen" size={64} className="mx-auto text-text-muted mb-6" />
+                      <h3 className="text-xl font-medium text-text-primary mb-3">
                         {courses.length === 0 ? 'No courses yet' : 'No courses match your filters'}
                       </h3>
-                      <p className="text-text-secondary mb-6">
+                      <p className="text-text-secondary mb-8 text-lg">
                         {courses.length === 0 
                           ? 'Get started by adding your first course to begin organizing your academic materials.' :'Try adjusting your search terms or filters to find the courses you\'re looking for.'
                         }

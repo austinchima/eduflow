@@ -54,7 +54,7 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
     const fetchUploadedFiles = async () => {
       if (!selectedCourse?.id) return;
       try {
-        const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials?courseId=${selectedCourse.id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials?courseId=${selectedCourse.id}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -134,7 +134,7 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
     }
     // Refresh uploaded files list for the course
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials?courseId=${courseId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials?courseId=${courseId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -196,7 +196,7 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
   const handleDownloadMaterial = async (materialId) => {
     setDownloadingId(materialId);
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/materials/download/${materialId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials/download/${materialId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -218,7 +218,7 @@ const MaterialUploadArea = ({ selectedCourse, onUploadComplete, fileInputRef, hi
     
     if (window.confirm(`Are you sure you want to delete "${courseName}" and all its materials?\n\nThis will permanently delete:\n• The course and all its data\n• All uploaded materials and files\n• Generated course content and AI materials\n• Study progress and analytics data\n\n⚠️ This action cannot be undone. All data will be permanently deleted from both the database and cloud storage.`)) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_APP_API_URL || 'http://localhost:4000/api'}/courses/${courseId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses/${courseId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
