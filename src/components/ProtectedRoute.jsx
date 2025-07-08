@@ -9,8 +9,10 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      console.log('ProtectedRoute: Checking authentication', { isLoading, user: !!user, userId: user?.id });
       // Wait for the user context to finish loading
       if (isLoading) {
+        console.log('ProtectedRoute: Still loading, waiting...');
         return;
       }
 
@@ -18,11 +20,14 @@ const ProtectedRoute = ({ children }) => {
       
       // Check if user is authenticated (has both user data and token)
       const token = localStorage.getItem('token');
+      console.log('ProtectedRoute: Auth check', { hasUser: !!user, hasUserId: !!(user && user.id), hasToken: !!token });
       if (!user || !user.id || !token) {
         // Not authenticated, redirect to auth page
+        console.log('ProtectedRoute: Not authenticated, redirecting to /auth');
         navigate('/auth');
       } else {
         // User is authenticated, allow access
+        console.log('ProtectedRoute: Authenticated, allowing access');
         setLoading(false);
       }
     };

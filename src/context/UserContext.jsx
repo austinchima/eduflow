@@ -368,27 +368,59 @@ function UserProvider({ children }) {
   // Load user data from backend on mount
   useEffect(() => {
     const loadUserData = async () => {
+      console.log('loadUserData: Starting authentication check');
       // Check if we have a token first
       const token = localStorage.getItem('token');
+      console.log('loadUserData: Token exists:', !!token);
       if (!token) {
         // No token, user is not authenticated
+        console.log('loadUserData: No token, setting default user');
         dispatch({ 
           type: ACTIONS.SET_USER, 
-          payload: { name: 'New Student', isLoading: false }
+          payload: { name: 'New Student' }
         });
         return;
       }
 
       try {
+        console.log('loadUserData: Fetching user data from backend');
         const user = await authService.getCurrentUser();
+        console.log('loadUserData: Backend user data:', user);
         if (user) {
+          // Map backend user data to frontend structure
+          const mappedUser = {
+            id: user._id || user.id, // Handle both _id and id
+            name: user.name || user.username || '',
+            username: user.username || '',
+            generatedUsername: user.generatedUsername || '',
+            email: user.email || '',
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            studyGoal: user.studyGoal || 5,
+            targetGpa: user.targetGpa || 3.8,
+            theme: user.theme || 'light',
+            hasCompletedSetup: user.hasCompletedSetup || false,
+            createdAt: user.createdAt || null,
+            preferences: {
+              ...state.user.preferences,
+              studyGoal: user.studyGoal || 5,
+              theme: user.theme || 'light',
+              hasCompletedSetup: user.hasCompletedSetup || false,
+            },
+            notifications: user.notifications || state.user.notifications,
+            privacy: user.privacy || state.user.privacy,
+            accessibility: user.accessibility || state.user.accessibility,
+            account: user.account || state.user.account
+          };
+          
+          console.log('loadUserData: Mapped user data:', mappedUser);
           // Update user and set loading to false in one dispatch
           dispatch({ 
             type: ACTIONS.SET_USER, 
-            payload: { ...user, isLoading: false }
+            payload: mappedUser
           });
           // Load user's courses from backend (async, don't block UI)
-          loadUserCourses(user.id).catch(error => {
+          loadUserCourses(mappedUser.id).catch(error => {
             console.error('Error loading courses:', error);
           });
         } else {
@@ -397,7 +429,7 @@ function UserProvider({ children }) {
           localStorage.removeItem('token');
           dispatch({ 
             type: ACTIONS.SET_USER, 
-            payload: { name: 'New Student', isLoading: false }
+            payload: { name: 'New Student' }
           });
         }
       } catch (error) {
@@ -406,9 +438,8 @@ function UserProvider({ children }) {
         localStorage.removeItem('token');
         dispatch({ 
           type: ACTIONS.SET_USER, 
-          payload: { name: 'New Student', isLoading: false }
+          payload: { name: 'New Student' }
         });
-        dispatch({ type: ACTIONS.SET_LOADING, payload: false });
       }
     };
     loadUserData();
@@ -876,7 +907,14 @@ function UserProvider({ children }) {
   // Check if user is properly authenticated
   const isAuthenticated = () => {
     const token = localStorage.getItem('token');
-    return !!(user && user.id && token);
+    const authenticated = !!(state.user && state.user.id && token);
+    console.log('isAuthenticated check:', {
+      hasUser: !!state.user,
+      hasUserId: !!(state.user && state.user.id),
+      hasToken: !!token,
+      authenticated
+    });
+    return authenticated;
   };
 
   // Force re-authentication check
@@ -940,7 +978,7 @@ function UserProvider({ children }) {
         // Update user and loading state in one dispatch to prevent flashing
         dispatch({ 
           type: ACTIONS.SET_USER, 
-          payload: { ...mappedUser, isLoading: false }
+          payload: mappedUser
         });
         
         // Load user's courses from backend (async, don't block UI)
@@ -951,7 +989,7 @@ function UserProvider({ children }) {
         // Fallback to login response data
         dispatch({ 
           type: ACTIONS.SET_USER, 
-          payload: { ...data.user, isLoading: false }
+          payload: data.user
         });
       }
       return data;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { authService } from '../services/auth';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -6,7 +6,7 @@ import Icon from '../components/AppIcon';
 import { useUser } from '../context/UserContext';
 
 const AuthPage = () => {
-  const { actions } = useUser();
+  const { actions, user, isLoading } = useUser();
   const [mode, setMode] = useState('login'); // 'login' or 'signup'
   const [form, setForm] = useState({
     firstName: '',
@@ -17,6 +17,22 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [debugInfo, setDebugInfo] = useState({});
+
+  // Add debugging information
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setDebugInfo({
+      hasToken: !!token,
+      tokenLength: token ? token.length : 0,
+      userState: {
+        hasUser: !!user,
+        userId: user?.id,
+        userName: user?.name,
+        isLoading
+      }
+    });
+  }, [user, isLoading]);
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -51,6 +67,14 @@ const AuthPage = () => {
   return (
     <div className={`min-h-screen flex items-center justify-center bg-background p-4 auth-transition ${loading ? 'loading' : ''}`}>
       <div className="bg-surface border border-border rounded-lg p-8 max-w-md w-full shadow-lg loading-transition">
+        {/* Debug Information */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-4 p-3 bg-gray-100 rounded text-xs">
+            <h4 className="font-bold mb-2">Debug Info:</h4>
+            <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+          </div>
+        )}
+        
         <div className="flex flex-col items-center mb-6">
           <Icon name="User" size={40} className="text-primary mb-2" />
           <h2 className="text-2xl font-bold text-text-primary mb-1">
@@ -101,32 +125,31 @@ const AuthPage = () => {
             required
             disabled={loading}
           />
-          {error && <div className="text-red-600 text-sm">{error}</div>}
-          {success && <div className="text-green-600 text-sm">{success}</div>}
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (mode === 'login' ? 'Signing In...' : 'Signing Up...') : (mode === 'login' ? 'Sign In' : 'Sign Up')}
+          {error && (
+            <div className="text-red-500 text-sm bg-red-50 p-3 rounded">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="text-green-500 text-sm bg-green-50 p-3 rounded">
+              {success}
+            </div>
+          )}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? 'Loading...' : mode === 'login' ? 'Sign In' : 'Create Account'}
           </Button>
         </form>
         <div className="mt-6 text-center">
           <button
             type="button"
-            className="text-primary hover:underline text-sm"
-            onClick={() => {
-              setMode(mode === 'login' ? 'signup' : 'login');
-              setError('');
-              setSuccess('');
-              setForm({
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-              });
-            }}
-            disabled={loading}
+            onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+            className="text-primary hover:text-primary-dark text-sm"
           >
-            {mode === 'login'
-              ? "Don't have an account? Sign up"
-              : 'Already have an account? Sign in'}
+            {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </button>
         </div>
       </div>
