@@ -208,7 +208,7 @@ For support or questions, please open an issue in the repository or contact the 
    - For Vite: `dist`
    - For Create React App: `build`
 3. **Environment Variables:**
-   - Set `VITE_API_URL` to your Render backend URL (e.g., `https://your-backend.onrender.com`)
+   - Set `VITE_API_URL` to your Render backend URL (e.g., `https://your-backend.onrender.com/api`)
 4. **Deploy:**
    - Connect your repo to Netlify and follow the prompts.
 
