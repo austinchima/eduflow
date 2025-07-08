@@ -368,8 +368,17 @@ function UserProvider({ children }) {
   // Load user data from backend on mount
   useEffect(() => {
     const loadUserData = async () => {
-      // Don't set loading to true immediately to prevent flashing
-      // Only set loading if we actually need to fetch data
+      // Check if we have a token first
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // No token, user is not authenticated
+        dispatch({ 
+          type: ACTIONS.SET_USER, 
+          payload: { name: 'New Student', isLoading: false }
+        });
+        return;
+      }
+
       try {
         const user = await authService.getCurrentUser();
         if (user) {
@@ -383,17 +392,21 @@ function UserProvider({ children }) {
             console.error('Error loading courses:', error);
           });
         } else {
-          // No user found, set default state without loading
+          // Token exists but user data couldn't be fetched (token might be invalid)
+          // Clear the invalid token and set default state
+          localStorage.removeItem('token');
           dispatch({ 
             type: ACTIONS.SET_USER, 
             payload: { name: 'New Student', isLoading: false }
           });
         }
       } catch (error) {
-        // Error occurred, set error state without loading
+        console.error('Error loading user data:', error);
+        // Token might be invalid, clear it and set default state
+        localStorage.removeItem('token');
         dispatch({ 
-          type: ACTIONS.SET_ERROR, 
-          payload: 'Failed to load user data'
+          type: ACTIONS.SET_USER, 
+          payload: { name: 'New Student', isLoading: false }
         });
         dispatch({ type: ACTIONS.SET_LOADING, payload: false });
       }
@@ -404,11 +417,24 @@ function UserProvider({ children }) {
   // Load user courses from backend
   const loadUserCourses = async (userId) => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token available, skipping course load');
+        return;
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/courses/user`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
+      
+      if (response.status === 401) {
+        // Token is invalid, clear it and don't load courses
+        console.log('Token is invalid, clearing from localStorage');
+        localStorage.removeItem('token');
+        return;
+      }
       
       if (response.ok) {
         const courses = await response.json();
@@ -444,7 +470,7 @@ function UserProvider({ children }) {
           try {
             const materialsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/materials?courseId=${course._id}`, {
               headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
               }
             });
             
@@ -843,8 +869,36 @@ function UserProvider({ children }) {
 
   const logout = async () => {
     await authService.signOut();
-    dispatch({ type: ACTIONS.SET_USER, payload: { name: 'New Student' } });
+    dispatch({ type: ACTIONS.RESET_DATA });
     localStorage.removeItem('studyAI_user');
+  };
+
+  // Check if user is properly authenticated
+  const isAuthenticated = () => {
+    const token = localStorage.getItem('token');
+    return !!(user && user.id && token);
+  };
+
+  // Force re-authentication check
+  const checkAuthentication = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      dispatch({ type: ACTIONS.RESET_DATA });
+      return false;
+    }
+
+    try {
+      const isValid = await authService.validateToken();
+      if (!isValid) {
+        dispatch({ type: ACTIONS.RESET_DATA });
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error checking authentication:', error);
+      dispatch({ type: ACTIONS.RESET_DATA });
+      return false;
+    }
   };
 
   const login = async (email, password) => {
@@ -1042,7 +1096,9 @@ function UserProvider({ children }) {
       signup,
       loadUserCourses,
       deleteMaterial,
-      savePersonalization
+      savePersonalization,
+      isAuthenticated,
+      checkAuthentication
     }
   };
 

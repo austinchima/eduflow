@@ -5,6 +5,7 @@ import ErrorBoundary from "components/ErrorBoundary";
 // Add your imports here
 import ProtectedRoute from "/src/components/ProtectedRoute.jsx";
 import UserSetup from "/src/components/UserSetup.jsx";
+import AuthPage from "pages/auth";
 import Dashboard from "pages/dashboard";
 import StudyToolsHub from "pages/study-tools-hub";
 import AnalyticsDashboard from "pages/analytics-dashboard";
@@ -23,6 +24,8 @@ const Routes = () => {
       <RouterRoutes>
         {/* Define your routes here */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Auth Route */}
+        <Route path="/auth" element={<AuthPage />} />
         {/* Protected Routes */}
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/study-tools-hub" element={<ProtectedRoute><StudyToolsHub /></ProtectedRoute>} />

@@ -3,14 +3,22 @@ import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
+      // Wait for the user context to finish loading
+      if (isLoading) {
+        return;
+      }
+
       setLoading(true);
-      if (!user || !user.id) {
+      
+      // Check if user is authenticated (has both user data and token)
+      const token = localStorage.getItem('token');
+      if (!user || !user.id || !token) {
         // Not authenticated, redirect to auth page
         navigate('/auth');
       } else {
@@ -20,10 +28,10 @@ const ProtectedRoute = ({ children }) => {
     };
 
     checkAuth();
-  }, [user, navigate]);
+  }, [user, isLoading, navigate]);
 
-  if (loading) {
-    // Render a loading indicator while checking
+  // Show loading while user context is loading or we're checking auth
+  if (isLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -35,7 +43,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // If authenticated, render children
-  if (user && user.id) {
+  if (user && user.id && localStorage.getItem('token')) {
     return <>{children}</>;
   }
 

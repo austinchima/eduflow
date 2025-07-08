@@ -7,7 +7,7 @@ import AuthPage from "./pages/auth";
 import { AccessibilityProvider } from "./context/AccessibilityContext";
 
 function AppContent() {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, actions } = useUser();
   const [setupComplete, setSetupComplete] = useState(false);
 
   // Show loading while user data is being loaded
@@ -22,8 +22,8 @@ function AppContent() {
     );
   }
 
-  // Check if user is authenticated (has a token and user ID)
-  const isAuthenticated = user && user.id && localStorage.getItem('token');
+  // Check if user is authenticated using the context function
+  const isAuthenticated = actions.isAuthenticated();
   
   // If not authenticated, show auth page
   if (!isAuthenticated) {

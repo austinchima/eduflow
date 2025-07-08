@@ -45,7 +45,29 @@ export const authService = {
     const res = await fetch(`${API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      // If token is invalid, clear it from localStorage
+      if (res.status === 401) {
+        localStorage.removeItem('token')
+      }
+      return null
+    }
     return res.json()
+  },
+
+  // Validate token
+  async validateToken() {
+    const token = localStorage.getItem('token')
+    if (!token) return false
+    const res = await fetch(`${API_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem('token')
+      }
+      return false
+    }
+    return true
   }
 }
